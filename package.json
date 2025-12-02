@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "format": "pnpm -r format",
-    "lint": "pnpm -r lint",
+    "format": "oxfmt .",
+    "lint": "oxlint .",
     "dev": "pnpm -r dev"
   },
   "keywords": [],
