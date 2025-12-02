@@ -1,0 +1,19 @@
+{
+  "name": "node-ts-starter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "format": "pnpm -r format",
+    "lint": "pnpm -r lint",
+    "dev": "pnpm -r dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "oxfmt": "^0.16.0",
+    "oxlint": "^1.31.0"
+  }
+}
