@@ -1,7 +1,7 @@
 {
   "name": "node-ts-starter",
   "version": "1.0.0",
-  "description": "",
+  "description": "A monorepo for Web & API applications built with Node.js and TypeScript",
   "main": "index.js",
   "scripts": {
     "format": "oxfmt .",
@@ -12,10 +12,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.13.1",
   "devDependencies": {
     "oxfmt": "^0.16.0",
     "oxlint": "^1.31.0",
     "oxlint-tsgolint": "^0.8.3"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=v22.13.0"
   }
 }

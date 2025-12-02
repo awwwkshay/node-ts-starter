@@ -1,5 +1,7 @@
 {
-  "name": "api",
+  "name": "@awwwkshay/node-ts-api-starter",
+  "version": "0.0.1",
+  "description": "API server for Node.js and TypeScript with Hono",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",

@@ -1,5 +1,7 @@
 {
-  "name": "web",
+  "name": "@awwwkshay/node-ts-web-starter",
+  "version": "0.0.1",
+  "description": "Web app for Node.js and TypeScript with Vite",
   "private": true,
   "type": "module",
   "scripts": {
