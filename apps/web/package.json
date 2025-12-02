@@ -4,11 +4,13 @@
   "description": "Web app for Node.js and TypeScript with Vite",
   "private": true,
   "type": "module",
+  "main": "./dist/server/index.mjs",
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "vite dev",
     "build": "vite build",
-    "serve": "vite preview",
-    "test": "vitest run"
+    "preview": "vite preview",
+    "test": "vitest run",
+    "start": "NITRO_PORT=3000 node ./dist/server/index.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.6",
@@ -32,7 +34,6 @@
     "@tanstack/devtools-vite": "^0.3.11",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
-    "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
