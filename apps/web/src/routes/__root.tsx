@@ -7,9 +7,11 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
-import Header from "../components/Header";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
+import axios from "axios";
+
+axios.defaults.baseURL = process.env.NITRO_API_BASE_URL || import.meta.env.VITE_API_BASE_URL;
 
 interface MyRouterContext {
 	queryClient: QueryClient;
@@ -26,7 +28,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: import.meta.env.VITE_APP_NAME || "Node TS Starter",
 			},
 		],
 		links: [
@@ -47,7 +49,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<Header />
 				{children}
 				<TanStackDevtools
 					config={{

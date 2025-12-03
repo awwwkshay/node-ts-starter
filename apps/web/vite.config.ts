@@ -11,7 +11,7 @@ const config = defineConfig({
 		devtools(),
 		nitro({
 			devServer: {
-				port: 5000,
+				port: 3000,
 			},
 			output: {
 				dir: "./dist",
@@ -26,16 +26,7 @@ const config = defineConfig({
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
-	],
-	server: {
-		proxy: {
-			'/api': {
-				target: 'http://localhost:8000',
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/api/, ''),
-			}
-		}
-	}
+	]
 });
 
 export default config;
