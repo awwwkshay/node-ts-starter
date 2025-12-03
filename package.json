@@ -7,7 +7,10 @@
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "lint": "oxlint . --fix --type-aware --type-check",
-    "dev": "pnpm -r dev"
+    "build": "pnpm -r build",
+    "prestart": "pnpm -r build",
+    "start": "pnpm --parallel -r start",
+    "dev": "pnpm --parallel -r dev"
   },
   "keywords": [],
   "author": "",
