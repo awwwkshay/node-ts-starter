@@ -1,17 +1,18 @@
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import { ITodo } from "@awwwkshay/node-ts-core"
-import { hello } from '@/services'
+import { hello, loadServerEnvVars } from '@/services'
 
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
   loader: async () => {
-    const response = await hello()
-    return response
+    const message = await hello()
+    const envVars = await loadServerEnvVars()
+    return { message, envVars }
   }
 })
 
 function RouteComponent() {
-  const message = useLoaderData({ from: "/dashboard/" })
+  const {message, envVars} = useLoaderData({ from: "/dashboard/" })
   const todos: ITodo[] = [
     {
       id: '1',
@@ -22,6 +23,7 @@ function RouteComponent() {
   return (<div className='flex flex-col gap-4'>
     <p>Todo List</p>
     <p>{message}</p>
+    <p>{JSON.stringify(envVars)}</p>
     <p>{import.meta.env.VITE_API_BASE_URL}</p>
     <ul>
       {todos.map((todo) => (
