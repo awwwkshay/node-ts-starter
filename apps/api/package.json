@@ -12,7 +12,7 @@
     "@hono/node-server": "^1.19.6",
     "hono": "^4.10.7",
     "zod": "^4.1.13",
-    "@awwwkshay/node-ts-core": "workspace:^0.0.1"
+    "@awwwkshay/node-ts-core": "workspace:*"
   },
   "devDependencies": {
     "dotenv": "^17.2.3"

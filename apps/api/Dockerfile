@@ -1,61 +1,83 @@
-# --------------------------
-# 1. Builder image
-# --------------------------
-FROM node:22-slim AS builder
+# -------------------------------------------------------------------
+# 1. Base setup (pnpm + workspace files)
+# -------------------------------------------------------------------
+FROM node:22-slim AS setup
 
 WORKDIR /app
-
 RUN npm install -g pnpm
 
-# Copy workspace root
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
 
-# Copy ONLY package.json files first (best practice)
+
+# -------------------------------------------------------------------
+# 2. Build packages (for production)
+# -------------------------------------------------------------------
+FROM setup AS packages_builder
+WORKDIR /app
+
+COPY packages ./packages/
+RUN pnpm install --frozen-lockfile
+RUN pnpm -r --filter "./packages/*" build
+
+
+# -------------------------------------------------------------------
+# 3. Build API (for production)
+# -------------------------------------------------------------------
+FROM setup AS api_builder
+WORKDIR /app
+
+# Bring built packages
+COPY --from=packages_builder /app/packages ./packages
+
 COPY apps/api/package.json ./apps/api/
-COPY packages/*/package.json ./packages/
+RUN pnpm install --frozen-lockfile
 
-# Install API deps (dev deps included)
-RUN pnpm install --frozen-lockfile --filter @awwwkshay/node-ts-api-starter
+COPY apps/api ./apps/api/
+RUN pnpm -r --filter ./apps/api build
 
-# Copy ALL source code (full repo!)
+
+# -------------------------------------------------------------------
+# 4. Development Stage (Live dev: pnpm dev)
+# -------------------------------------------------------------------
+FROM setup AS development
+WORKDIR /app
+
+# Copy EVERYTHING needed for dev mode
 COPY . .
 
-# Build TS
+# Install all deps (root + packages + apps)
+RUN pnpm install --frozen-lockfile
+
+# Expose your dev port
+ENV PORT=8000
+EXPOSE ${PORT}
+
 WORKDIR /app/apps/api
-RUN pnpm build
+CMD ["pnpm", "dev"]
 
-# --------------------------
-# 2. Production runtime image
-# --------------------------
-FROM node:22-slim
 
+# -------------------------------------------------------------------
+# 5. Production Stage (small + built only)
+# -------------------------------------------------------------------
+FROM node:22-slim AS production
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=8000
 ENV CLIENT_URL=http://localhost:3000
 
-RUN npm install -g pnpm
-
-# Copy workspace + lockfile
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
 
-# Copy only package.json for workspace packages
-COPY packages/*/package.json ./packages/
+# Copy only the built artifacts (no src)
+COPY --from=packages_builder /app/packages ./packages
+COPY --from=api_builder /app/apps/api ./apps/api
 
-# Copy API package.json
-COPY apps/api/package.json ./apps/api/
+# Install production-only deps
+RUN npm install -g pnpm && pnpm install --frozen-lockfile --prod
 
-# Install production dependencies including workspace deps
-RUN pnpm install --prod --frozen-lockfile --filter @awwwkshay/node-ts-api-starter
+EXPOSE ${PORT}
 
-# Copy final workspace packages (required at runtime!)
-COPY packages ./packages
-
-# Copy final build output
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-
-EXPOSE $PORT
-CMD ["node", "apps/api/dist/index.js"]
+WORKDIR /app/apps/api
+CMD ["node", "dist/index.js"]
