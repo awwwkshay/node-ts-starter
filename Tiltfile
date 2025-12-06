@@ -1,3 +1,12 @@
+APPS = ["api", "web"]
+
+def ignore_other_apps(current):
+    ignored = []
+    for app in APPS:
+        if app != current:
+            ignored.append("./apps/" + app)
+    return ignored
+
 # api
 docker_build(
     ref="gcr.io/awwwkshay/node-ts-api-starter", 
@@ -6,6 +15,7 @@ docker_build(
     live_update=[
         sync("./apps/api/src/", "/app/apps/api/src"),
     ],
+    ignore=ignore_other_apps("api"),
     target="development"
 )
 
@@ -31,6 +41,7 @@ docker_build(
         sync("./apps/web/src/", "/app/apps/web/src"),
         sync("./apps/web/public/", "/app/apps/web/public"),
     ],
+    ignore=ignore_other_apps("web"),
     target="development"
 )
 
