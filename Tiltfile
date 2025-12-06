@@ -1,6 +1,6 @@
 # api
 docker_build(
-    ref="node-ts-api-starter", 
+    ref="gcr.io/awwwkshay/node-ts-api-starter", 
     context=".",
     dockerfile="./apps/api/Dockerfile",
     live_update=[
@@ -24,7 +24,7 @@ k8s_resource(
 
 # web
 docker_build(
-    ref="node-ts-web-starter",
+    ref="gcr.io/awwwkshay/node-ts-web-starter",
     context=".",
     dockerfile="./apps/web/Dockerfile",
     live_update=[

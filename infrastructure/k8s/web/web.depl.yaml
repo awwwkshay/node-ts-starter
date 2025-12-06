@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: node-ts-web-starter
+          image: gcr.io/awwwkshay/node-ts-web-starter
           ports:
             - containerPort: 3000
           env:

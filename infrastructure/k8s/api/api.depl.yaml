@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: node-ts-api-starter
+          image: gcr.io/awwwkshay/node-ts-api-starter
           ports:
             - containerPort: 8000
           env:
