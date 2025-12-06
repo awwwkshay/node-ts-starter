@@ -41,6 +41,11 @@ RUN pnpm -r --filter ./apps/api build
 # 4. Development Stage (Live dev: pnpm dev)
 # -------------------------------------------------------------------
 FROM setup AS development
+
+ENV NODE_ENV=production
+ENV PORT=8000
+ENV CLIENT_URL=http://localhost:3000
+
 WORKDIR /app
 
 # Copy EVERYTHING needed for dev mode
@@ -61,11 +66,12 @@ CMD ["pnpm", "dev"]
 # 5. Production Stage (small + built only)
 # -------------------------------------------------------------------
 FROM node:22-slim AS production
-WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=8000
 ENV CLIENT_URL=http://localhost:3000
+
+WORKDIR /app
 
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
