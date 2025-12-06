@@ -56,3 +56,16 @@ k8s_resource(
     'web-deployment',
     port_forwards=['3000:3000','9001:9229']
 )
+
+# Postgres
+
+k8s_yaml([  
+    'infrastructure/k8s/postgres/postgres.depl.yaml',
+    'infrastructure/k8s/postgres/postgres.service.yaml',
+    'infrastructure/k8s/postgres/postgres.secret.yaml',
+    ])
+
+k8s_resource(
+    'postgres',
+    port_forwards=['5432:5432']
+)
