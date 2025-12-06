@@ -17,9 +17,15 @@
     "dist"
   ],
   "scripts": {
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
+    
+    "lint": "oxlint . --fix --type-aware --type-check",
+
+    "clean": "rimraf dist",
+
     "build": "tsup",
     "dev": "tsup --watch",
-    "clean": "rm -rf dist",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {

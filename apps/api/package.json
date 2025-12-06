@@ -5,6 +5,13 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
+    
+    "lint": "oxlint . --fix --type-aware --type-check",
+
+    "clean": "rimraf dist",
+
     "dev": "NODE_ENV=development tsx watch src/index.ts",
     "build": "tsc -p ."
   },
