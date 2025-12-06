@@ -21,7 +21,7 @@ function RouteComponent() {
     }
   ]
   return (<div className='flex flex-col gap-4'>
-    <p>Todo List</p>
+    <p className='text-red-300'>Todo List</p>
     <p>{message}</p>
     <p>{JSON.stringify(envVars)}</p>
     <p>{import.meta.env.VITE_API_BASE_URL}</p>

@@ -1,63 +1,93 @@
-# --------------------------
-# 1. Builder image
-# --------------------------
-FROM node:22-slim AS builder
+# -------------------------------------------------------------------
+# 1. Base setup (pnpm + workspace files)
+# -------------------------------------------------------------------
+FROM node:22-slim AS setup
 
 WORKDIR /app
-
 RUN npm install -g pnpm
 
-# Copy workspace root
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
 
-# Copy ONLY package.json files first (best practice)
+
+# -------------------------------------------------------------------
+# 2. Build packages (for production)
+# -------------------------------------------------------------------
+FROM setup AS packages_builder
+WORKDIR /app
+
+COPY packages ./packages/
+RUN pnpm install --frozen-lockfile
+RUN pnpm -r --filter "./packages/*" build
+
+
+# -------------------------------------------------------------------
+# 3. Build Web (for production)
+# -------------------------------------------------------------------
+FROM setup AS web_builder
+WORKDIR /app
+
+# Bring built packages
+COPY --from=packages_builder /app/packages ./packages
+
 COPY apps/web/package.json ./apps/web/
-COPY packages/*/package.json ./packages/
+RUN pnpm install --frozen-lockfile
 
-# Install API deps (dev deps included)
-RUN pnpm install --frozen-lockfile --filter @awwwkshay/node-ts-web-starter
+COPY apps/web ./apps/web/
+RUN pnpm -r --filter ./apps/web build
 
-# Copy ALL source code (full repo!)
+
+# -------------------------------------------------------------------
+# 4. Development Stage (Live dev: pnpm dev)
+# -------------------------------------------------------------------
+FROM setup AS development
+
+ENV NODE_ENV=development
+ENV NITRO_PORT=3000
+ENV NITRO_API_BASE_URL=http://api:8000
+ENV VITE_API_BASE_URL=http://api:8000
+ENV VITE_APP_NAME="Node TS Starter"
+
+WORKDIR /app
+
+# Copy everything (source for rebuilds)
 COPY . .
 
-# Build TS
+# Install deps
+RUN pnpm install --frozen-lockfile
+
+# Build Nitro + Vite output ONCE for the container
 WORKDIR /app/apps/web
 RUN pnpm build
 
-# --------------------------
-# 2. Production runtime image
-# --------------------------
-FROM node:22-slim
+EXPOSE ${NITRO_PORT}
+CMD ["node", "dist/server/index.mjs"]
+
+
+# -------------------------------------------------------------------
+# 5. Production Stage (small + built only)
+# -------------------------------------------------------------------
+FROM node:22-slim AS production
+
+ENV NODE_ENV=production
+ENV NITRO_PORT=3000
+ENV NITRO_API_BASE_URL=http://localhost:8000
+ENV VITE_API_BASE_URL=http://localhost:8000
+ENV VITE_APP_NAME="Node TS Starter"
 
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV NITRO_PORT=5173
-ENV NITRO_API_BASE_URL=http://host.docker.internal:8000
-ENV VITE_API_BASE_URL=http://host.docker.internal:8000
-ENV VITE_APP_NAME="Node TS Starter"
-
-RUN npm install -g pnpm
-
-# Copy workspace + lockfile
 COPY pnpm-workspace.yaml ./
 COPY package.json pnpm-lock.yaml ./
 
-# Copy only package.json for workspace packages
-COPY packages/*/package.json ./packages/
+# Copy only the built artifacts (no src)
+COPY --from=packages_builder /app/packages ./packages
+COPY --from=web_builder /app/apps/web ./apps/web
 
-# Copy API package.json
-COPY apps/web/package.json ./apps/web/
+# Install production-only deps
+RUN npm install -g pnpm && pnpm install --frozen-lockfile --prod
 
-# Install production dependencies including workspace deps
-RUN pnpm install --prod --frozen-lockfile --filter @awwwkshay/node-ts-web-starter
+EXPOSE ${NITRO_PORT}
 
-# Copy final workspace packages (required at runtime!)
-COPY packages ./packages
-
-# Copy final build output
-COPY --from=builder /app/apps/web/dist ./apps/web/dist
-
-EXPOSE $NITRO_PORT
-CMD ["node", "apps/web/dist/server/index.mjs"]
+WORKDIR /app/apps/web
+CMD ["node", "dist/server/index.mjs"]
