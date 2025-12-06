@@ -6,12 +6,14 @@
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
+    
     "lint": "oxlint . --fix --type-aware --type-check",
+
     "build:apps": "pnpm -r --filter './apps/*' build",
     "build:packages": "pnpm -r --filter './packages/*' build",
     "build:all": "pnpm build:packages && pnpm build:apps",
 
-    "clean:dist": "pnpm rimraf ./**/dist",
+    "clean:dist": "pnpm rimraf ./apps/**/dist ./packages/**/dist",
     "clean:node_modules": "pnpm rimraf ./apps/**/node_modules ./packages/**/node_modules",
     "clean:all": "pnpm clean:dist && pnpm clean:node_modules",
 
