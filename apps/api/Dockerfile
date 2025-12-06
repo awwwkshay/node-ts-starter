@@ -42,7 +42,7 @@ RUN pnpm -r --filter ./apps/api build
 # -------------------------------------------------------------------
 FROM setup AS development
 
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 ENV PORT=8000
 ENV CLIENT_URL=http://localhost:3000
 
@@ -54,12 +54,10 @@ COPY . .
 # Install all deps (root + packages + apps)
 RUN pnpm install --frozen-lockfile
 
-# Expose your dev port
-ENV PORT=8000
-EXPOSE ${PORT}
+EXPOSE ${PORT} 9229
 
 WORKDIR /app/apps/api
-CMD ["pnpm", "dev"]
+CMD ["pnpm","tsx", "watch", "src/index.ts"]
 
 
 # -------------------------------------------------------------------

@@ -29,7 +29,7 @@ k8s_yaml([
 
 k8s_resource(
    'api-deployment',
-    port_forwards='8000:8000'
+    port_forwards=['8000:8000','9000:9229']
 )
 
 # web
@@ -54,5 +54,5 @@ k8s_yaml([
 
 k8s_resource(
     'web-deployment',
-    port_forwards='3000:3000'
+    port_forwards=['3000:3000','9001:9229']
 )

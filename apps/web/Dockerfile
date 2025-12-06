@@ -38,7 +38,7 @@ RUN pnpm -r --filter ./apps/web build
 
 
 # -------------------------------------------------------------------
-# 4. Development Stage (Live dev: pnpm dev)
+# 4. Development Stage (pnpm dev)
 # -------------------------------------------------------------------
 FROM setup AS development
 
@@ -52,16 +52,18 @@ WORKDIR /app
 
 # Copy everything (source for rebuilds)
 COPY . .
+# Install pnpm
+RUN npm install -g pnpm
 
 # Install deps
 RUN pnpm install --frozen-lockfile
 
-# Build Nitro + Vite output ONCE for the container
-WORKDIR /app/apps/web
-RUN pnpm build
+# Expose ports for Nitro and debugger
+EXPOSE ${NITRO_PORT} 9229
 
-EXPOSE ${NITRO_PORT}
-CMD ["node", "dist/server/index.mjs"]
+# Start Nitro + Vite dev server
+WORKDIR /app/apps/web
+CMD ["pnpm", "dev"]
 
 
 # -------------------------------------------------------------------
