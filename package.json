@@ -7,10 +7,16 @@
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "lint": "oxlint . --fix --type-aware --type-check",
-    "build": "pnpm -r build",
-    "prestart": "pnpm -r build",
-    "start": "pnpm --parallel -r start",
-    "dev": "pnpm --parallel -r dev"
+    "build:apps": "pnpm -r --filter './apps/*' build",
+    "build:packages": "pnpm -r --filter './packages/*' build",
+    "build:all": "pnpm build:packages && pnpm build:apps",
+
+    "clean:dist": "pnpm rimraf ./**/dist",
+    "clean:node_modules": "pnpm rimraf ./apps/**/node_modules ./packages/**/node_modules",
+    "clean:all": "pnpm clean:dist && pnpm clean:node_modules",
+
+    "dev": "pnpm --parallel -r --filter './apps/*' dev",
+    "dev:k8s": "tilt up"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +26,9 @@
     "oxfmt": "^0.16.0",
     "oxlint": "^1.31.0",
     "oxlint-tsgolint": "^0.8.3",
+    "rimraf": "^6.1.2",
     "tsx": "^4.7.1",
+    "turbo": "^2.6.3",
     "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.13.1",
