@@ -17,7 +17,7 @@ const config = defineConfig({
 				dir: "./dist",
 				publicDir: "./dist/public",
 				serverDir: "./dist/server",
-			}
+			},
 		}),
 		// this is the plugin that enables path aliases
 		viteTsConfigPaths({
@@ -26,7 +26,7 @@ const config = defineConfig({
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
-	]
+	],
 });
 
 export default config;
