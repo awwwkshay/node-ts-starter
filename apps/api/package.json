@@ -7,21 +7,23 @@
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
-    
     "lint": "oxlint . --fix --type-aware --type-check",
-
     "clean": "rimraf dist",
-
     "dev": "NODE_ENV=development tsx watch src/index.ts",
     "build": "tsc -p ."
   },
   "dependencies": {
+    "@awwwkshay/node-ts-core": "workspace:*",
     "@hono/node-server": "^1.19.6",
+    "drizzle-orm": "^0.45.0",
     "hono": "^4.10.7",
-    "zod": "^4.1.13",
-    "@awwwkshay/node-ts-core": "workspace:*"
+    "pg": "^8.16.3",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
-    "dotenv": "^17.2.3"
+    "@types/pg": "^8.15.6",
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0"
   }
 }

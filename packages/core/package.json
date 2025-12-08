@@ -19,11 +19,8 @@
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
-    
     "lint": "oxlint . --fix --type-aware --type-check",
-
     "clean": "rimraf dist",
-
     "build": "tsup",
     "dev": "tsup --watch",
     "type-check": "tsc --noEmit"
@@ -34,5 +31,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "drizzle-orm": "^0.45.0",
+    "drizzle-zod": "^0.8.3"
+  }
 }

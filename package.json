@@ -7,7 +7,6 @@
     "clean:dist": "pnpm rimraf ./apps/**/dist ./packages/**/dist",
     "clean:node_modules": "pnpm rimraf ./apps/**/node_modules ./packages/**/node_modules",
     "clean:all": "pnpm clean:dist && pnpm clean:node_modules",
-
     "dev:k8s": "tilt up"
   },
   "keywords": [],
@@ -23,8 +22,8 @@
     "turbo": "^2.6.3",
     "typescript": "^5.9.3"
   },
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.24.0",
   "engines": {
-    "node": ">=v22.13.0"
+    "node": ">=v10.24.0"
   }
 }
