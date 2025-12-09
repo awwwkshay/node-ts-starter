@@ -1,2 +1,2 @@
 export {todoSchema, todoInsertSchema, todoUpdateSchema } from "./todo"
-export type { ITodo, ITodoInsert, ITodoUpdate } from "./todo"
+export type { ITodo, ITodoCreate , ITodoUpdate } from "./todo"
