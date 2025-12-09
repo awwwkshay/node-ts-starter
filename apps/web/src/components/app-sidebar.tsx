@@ -1,26 +1,35 @@
 import { Link } from '@tanstack/react-router'
-import { Sidebar, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuItem } from './ui'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem } from './ui'
+import { ThemeToggle } from './theme-togle'
 
 export const AppSidebar = () => {
   return (
-    <Sidebar className='p-2 h-full flex flex-col items-start'>
+    <Sidebar className='h-full flex flex-col items-start'>
         <SidebarHeader>
           <Link to="/">
             <h1 className="text-2xl font-semibold">My App</h1>
           </Link>
         </SidebarHeader>
-        <SidebarMenu title="Main Menu" />
-          <SidebarMenuItem>
-              <Link
-                  to="/dashboard" // route to your Todos panel
-                  className="block px-4 py-2 rounded hover:bg-gray-100"
-              >
-                  Todos
-              </Link>
-          </SidebarMenuItem>
-        <SidebarMenu/>
-        <SidebarFooter className='mt-auto w-full'>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Application</SidebarGroupLabel>
+            <SidebarGroupContent>
+            <SidebarMenu title="Main Menu" />
+            <Link
+              to="/dashboard"
+            >
+              <SidebarMenuItem className='p-2'>
+                Todos
+              </SidebarMenuItem>
+            </Link>
+            <SidebarMenu />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        
+        <SidebarFooter className='mt-auto w-full flex flex-row justify-between items-center'>
           <h1 className="text-2xl">Hi, Akshay</h1>
+          <ThemeToggle/>
         </SidebarFooter>
     </Sidebar>
   )

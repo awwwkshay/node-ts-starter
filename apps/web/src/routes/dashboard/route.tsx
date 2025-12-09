@@ -10,9 +10,9 @@ function DashboardLayout() {
     <div className="dashboard-layout">
       <SidebarProvider>
         <AppSidebar/>
-        <section className='w-full'>
+        <section className='w-full h-screen'>
           <SidebarTrigger/>
-          <main className='w-full h-screen'><Outlet /></main>
+          <main><Outlet /></main>
         </section>
       </SidebarProvider>
     </div>
