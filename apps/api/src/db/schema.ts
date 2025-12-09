@@ -1,3 +1,3 @@
-import {todosTable} from "@awwwkshay/node-ts-core"
+import { todosTable } from "@awwwkshay/node-ts-core";
 
-export {todosTable}
+export { todosTable };

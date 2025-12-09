@@ -1,1 +1,1 @@
-export {todosTable} from "./schema"
+export { todosTable } from "./schema";

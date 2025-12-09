@@ -1,18 +1,18 @@
-import 'dotenv/config';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { todosTable } from './schema.js';
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/node-postgres";
 
-const useSsl = process.env.DB_SSL?.toLowerCase() === 'true';
+import { todosTable } from "./schema.js";
+
+const useSsl = process.env.DB_SSL?.toLowerCase() === "true";
 
 const connectionOptions = {
-  connectionString: process.env.DATABASE_URL!,
-  ssl: useSsl ? { rejectUnauthorized: false } : false,
+	connectionString: process.env.DATABASE_URL!,
+	ssl: useSsl ? { rejectUnauthorized: false } : false,
 };
 
 export const db = drizzle({
-  connection: connectionOptions,
-  schema: {
-    todos: todosTable,
-  },
+	connection: connectionOptions,
+	schema: {
+		todos: todosTable,
+	},
 });
-

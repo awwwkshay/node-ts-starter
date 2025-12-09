@@ -3,8 +3,8 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import { envVars, loadEnvVars, setEnvVars } from "./configs/index.js";
-import type { Env } from "./schemas/index.js";
 import { todosRouter } from "./controllers/todo.js";
+import type { Env } from "./schemas/index.js";
 
 // load node environment
 const NODE_ENV = (process.env.NODE_ENV || "production") as Env["NODE_ENV"];
@@ -47,7 +47,7 @@ app.get("/info", (c) => {
 	});
 });
 
-app.route("/todos", todosRouter)
+app.route("/todos", todosRouter);
 
 // start server
 serve(

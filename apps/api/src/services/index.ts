@@ -1,1 +1,7 @@
-export {createTodo,deleteTodo,getTodos,getTodoById,updateTodo} from "./todo.js"
+export {
+	createTodo,
+	deleteTodo,
+	getTodos,
+	getTodoById,
+	updateTodo,
+} from "./todo.js";

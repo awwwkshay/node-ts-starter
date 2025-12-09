@@ -8,9 +8,10 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import axios from "axios";
 
+import { ThemeProvider } from "@/components";
+
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import appCss from "../styles.css?url";
-import { ThemeProvider } from "@/components";
 
 axios.defaults.baseURL =
 	process.env.NITRO_API_BASE_URL || import.meta.env.VITE_API_BASE_URL;
