@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:13
+          image: ghcr.io/awwwkshay/postgres-multi-db:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 5432
           envFrom:

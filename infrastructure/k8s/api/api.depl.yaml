@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: api
-          image: gcr.io/awwwkshay/node-ts-api-starter
+          image: ghcr.io/awwwkshay/node-ts-api-starter
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
           env:

@@ -9,7 +9,7 @@ def ignore_other_apps(current):
 
 # api
 docker_build(
-    ref="gcr.io/awwwkshay/node-ts-api-starter", 
+    ref="ghcr.io/awwwkshay/node-ts-api-starter", 
     context=".",
     dockerfile="./apps/api/Dockerfile",
     live_update=[
@@ -34,7 +34,7 @@ k8s_resource(
 
 # web
 docker_build(
-    ref="gcr.io/awwwkshay/node-ts-web-starter",
+    ref="ghcr.io/awwwkshay/node-ts-web-starter",
     context=".",
     dockerfile="./apps/web/Dockerfile",
     live_update=[
