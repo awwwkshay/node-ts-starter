@@ -1,0 +1,39 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
+    "lint": "oxlint . --fix --type-aware --type-check",
+    "clean": "rimraf dist",
+    "dev": "NODE_ENV=development tsx watch src/server.ts",
+    "build": "tsc -p .",
+    "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output src/db/auth-schema.ts --config src/lib/auth.ts",
+    "auth:secret": "pnpm dlx @better-auth/cli@latest secret",
+    "migrations:generate": "pnpm exec drizzle-kit generate",
+    "migrations:up": "pnpm exec drizzle-kit migrate",
+    "migrations:down": "pnpm exec drizzle-kit drop"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.24.0",
+  "devDependencies": {
+    "@better-auth/cli": "^1.4.6",
+    "@types/pg": "^8.15.6",
+    "drizzle-kit": "^0.31.8",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "better-auth": "^1.4.6",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.0",
+    "hono": "^4.10.7",
+    "pg": "^8.16.3",
+    "zod": "^4.1.13"
+  }
+}
