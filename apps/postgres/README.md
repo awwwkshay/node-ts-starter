@@ -1,57 +1,42 @@
-# Using multiple databases with the official PostgreSQL Docker image
+# Postgres helper
 
-The [official recommendation](https://hub.docker.com/_/postgres/) for creating
-multiple databases is as follows:
-
-*If you would like to do additional initialization in an image derived from
-this one, add one or more `*.sql`, `*.sql.gz`, or `*.sh` scripts under
-`/docker-entrypoint-initdb.d` (creating the directory if necessary). After the
-entrypoint calls `initdb` to create the default `postgres` user and database,
-it will run any `*.sql` files and source any `*.sh` scripts found in that
-directory to do further initialization before starting the service.*
-
-This directory contains a script to create multiple databases using that
-mechanism.
+This folder hosts `create-multiple-postgresql-databases.sh`, a helper script that runs inside the official Postgres Docker image to provision multiple databases/users in one go. Tilt mounts this script into the container under `/docker-entrypoint-initdb.d`, so every time Postgres boots (and detects a fresh data directory) it can create the extra databases defined via `POSTGRES_MULTIPLE_DATABASES`.
 
 ## Usage
 
-### By mounting a volume
+### With Tilt or Docker Compose
 
-Clone the repository, mount its directory as a volume into
-`/docker-entrypoint-initdb.d` and declare database names separated by commas in
-`POSTGRES_MULTIPLE_DATABASES` environment variable as follows
-(`docker-compose` syntax):
+1. Ensure the container mounts this directory to `/docker-entrypoint-initdb.d`.
+2. Set environment variables before starting Postgres:
 
-    myapp-postgresql:
-        image: postgres:9.6.2
-        volumes:
-            - ../docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
-        environment:
-            - POSTGRES_MULTIPLE_DATABASES: db1,db2
-            - POSTGRES_USER: myapp
-            - POSTGRES_PASSWORD:
+```yaml
+POSTGRES_MULTIPLE_DATABASES: "app,auth"
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: securepassword
+```
 
-### By building a custom image
+Postgres runs the script once when the data directory is empty, and it will create a user/database pair for every comma-separated name listed in `POSTGRES_MULTIPLE_DATABASES`.
 
-Clone the repository, build and push the image to your Docker repository,
-for example for Google Private Repository do the following:
+### Custom image
 
-    docker build --tag=eu.gcr.io/your-project/postgres-multi-db .
-    gcloud docker -- push eu.gcr.io/your-project/postgres-multi-db
+If you build your own Postgres image, copy this script into it or mount the directory at runtime. The script expects `POSTGRES_USER` to exist (it uses the official entrypoint defaults) and requires `POSTGRES_MULTIPLE_DATABASES` to be set to a comma-separated list of names.
 
-You still need to pass the `POSTGRES_MULTIPLE_DATABASES` environment variable
-to the container:
+### Non-standard names
 
-    myapp-postgresql:
-        image: eu.gcr.io/your-project/postgres-multi-db
-        environment:
-            - POSTGRES_MULTIPLE_DATABASES: db1,db2
-            - POSTGRES_USER: myapp
-            - POSTGRES_PASSWORD:
+Wrap names with quotes if they contain hyphens, uppercase letters, or other special characters. Example:
 
-### Non-standard database names
+```yaml
+POSTGRES_MULTIPLE_DATABASES: "test-db-1","test-db-2"
+```
 
-If you need to use non-standard database names (hyphens, uppercase letters etc), quote them in `POSTGRES_MULTIPLE_DATABASES`:
+## Scripts
 
-        environment:
-            - POSTGRES_MULTIPLE_DATABASES: "test-db-1","test-db-2"
+`create-multiple-postgresql-databases.sh` looks for `POSTGRES_MULTIPLE_DATABASES`, splits the value on commas, and for each entry it:
+
+1. Creates a user named after the database.
+2. Creates a matching database.
+3. Grants all privileges on that database to the user.
+
+Environment variables such as `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` still respect the official Postgres image defaults.
+
+Generated on 2025-12-11

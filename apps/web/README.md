@@ -1,19 +1,12 @@
 # @awwwkshay/node-ts-web-starter
 
-Front-end for the `node-ts-starter` monorepo. Built on **Vite**, **React 19**, and **TanStack Router / Query**, it demonstrates server-integrated routing, modern styling, and shared schema usage with the API package.
-
-## Highlights
-
-- **Routing:** File-based routes live under `src/routes/` and are wired together via the generated `routeTree` (see `routeTree.gen.ts`).
-- **Data layer:** TanStack Query is initialized through `src/integrations/tanstack-query/root-provider.tsx`; the router wraps every route with the shared query client for SSR-friendly fetching.
-- **Styling:** Tailwind CSS 4.0 shapes the gradients and responsive layout in `src/routes/index.tsx`; components use utility classes plus Lucide icons for visual polish.
-- **Full-stack ready:** Environment-aware builds make it easy to point the UI at the sibling API (`NITRO_API_BASE_URL`) while still supporting `vite dev` for local iteration.
+React 19 client that pairs Vite, Nitro, and TanStack Router/Query with shared `todoSchema` contracts from `packages/core`.
 
 ## Prerequisites
 
-1. Node.js >= 22.13.0 (root `package.json` enforces this engine).
-2. `pnpm@10.13.1` to match the workspace lockfile.
-3. `pnpm install` from the repository root to populate hoisted dependencies and link workspace packages.
+1. Node.js ≥ 24.12.0 and pnpm 10.24.0 (workspace-wide requirements).
+2. Copy `apps/web/example.env`, remove the comments, and set `NITRO_API_BASE_URL`, `VITE_API_BASE_URL`, `NITRO_PORT`, and `VITE_APP_NAME` appropriately.
+3. Install dependencies from the workspace root:
 
 ```bash
 pnpm install
@@ -23,62 +16,52 @@ pnpm install
 
 | Command | Description |
 | --- | --- |
-| `pnpm --filter @awwwkshay/node-ts-web-starter dev` | Launch the Vite dev server. Hot reloads + TanStack Router devtools in the browser. |
-| `pnpm --filter @awwwkshay/node-ts-web-starter build` | Generate a production build for both client and server artifacts (`nitro`/SSR). |
-| `pnpm --filter @awwwkshay/node-ts-web-starter preview` | Preview the build via `vite preview`. |
-| `pnpm --filter @awwwkshay/node-ts-web-starter test` | Run unit/integration tests with Vitest. |
-| `pnpm --filter @awwwkshay/node-ts-web-starter start` | Start the compiled SSR server (`node ./dist/server/index.mjs`). Expects `NITRO_API_BASE_URL` and `NITRO_PORT`. |
-| `pnpm --filter @awwwkshay/node-ts-web-starter format` | Format sources with `oxfmt`. |
-| `pnpm --filter @awwwkshay/node-ts-web-starter lint` | Run `oxlint` with type-aware rules. |
-| `pnpm --filter @awwwkshay/node-ts-web-starter clean` | Remove the `dist/` output. |
+| `pnpm --filter @awwwkshay/node-ts-web-starter dev` | Vite dev server with Nitro dev mode and TanStack Router devtools. |
+| `pnpm --filter @awwwkshay/node-ts-web-starter build` | Nitro + Vite production build (`dist/`). |
+| `pnpm --filter @awwwkshay/node-ts-web-starter preview` | Preview the production build via `vite preview`. |
+| `pnpm --filter @awwwkshay/node-ts-web-starter test` | Run `vitest run` for unit/integration tests. |
+| `pnpm --filter @awwwkshay/node-ts-web-starter start` | Start the compiled Nitro SSR server (`node ./dist/server/index.mjs`). |
+| `pnpm --filter @awwwkshay/node-ts-web-starter format` / `format:check` | Run `oxfmt`. |
+| `pnpm --filter @awwwkshay/node-ts-web-starter lint` | Run `oxlint` (type-aware). |
+| `pnpm --filter @awwwkshay/node-ts-web-starter clean` | Remove `dist/`. |
 
 ## Environment
 
-Environment variables live on the `start` script and the Vite/Nitro stack. For local production-like tests, set:
-
 ```bash
-export NITRO_PORT=3000
-export NITRO_API_BASE_URL=http://localhost:8000
+NITRO_PORT=3000
+NITRO_API_BASE_URL=http://localhost:8000
+VITE_API_BASE_URL=http://localhost:8000
+VITE_APP_NAME=Node TS Starter
 ```
 
-- `NITRO_API_BASE_URL` points to `apps/api` so the front-end can call the Hono server.
-- `NITRO_PORT` controls where the SSR server listens when using `pnpm start`.
-
-When running `pnpm --filter ... dev`, Vite spies on `vite.config.ts` and automatically proxies to the API if you configure it there.
+- `NITRO_API_BASE_URL` points to the API server for SSR fetches; `VITE_API_BASE_URL` mirrors this for browser-only calls.
+- `NITRO_PORT` controls where the SSR server listens during `pnpm start` or `nitro preview`.
+- Any env referenced above can be overridden via `apps/web/example.env` or while running inside Tilt.
 
 ## Architecture
 
-1. **`src/router.tsx`** builds the TanStack router, attaches the generated route tree, and wires the shared TanStack Query client using `setupRouterSsrQueryIntegration`.  
-2. **`src/routes/`** drives the UI. `__root.tsx` defines the shared layout, while `index.tsx` provides the hero page you see on first load.  
-3. **`src/integrations/tanstack-query/`** hosts the query context/provider plus the DevTools integration referenced by the router wrapper.  
-4. **`src/schema`/`packages/core`** share Zod schemas to keep API contracts consistent (e.g., `todoSchema`).  
-5. **`src/styles.css` & Tailwind config**: Tailwind 4 supplies utility-first styling; check `src/styles.css` for base resets and gradient definitions.  
+- `src/router.tsx` wires TanStack Router with the generated `routeTree` and shared query client for SSR-friendly fetching.
+- `src/routes/` (e.g., `__root.tsx`, `index.tsx`) define the layout and hero experience.
+- `src/integrations/tanstack-query/` exposes the DevTools-enabled TanStack Query client used by loaders.
+- Styling is handled by Tailwind 4 plus `src/styles.css`, with Lucide icons and Motion for gradients.
+- The shared `todoSchema` lives in `packages/core` so the UI validates API responses with the same contract.
 
-## Development Flow
+## Development flow
 
-1. Start the API: `pnpm --filter @awwwkshay/node-ts-api-starter dev`.  
-2. Run the web server: `pnpm --filter @awwwkshay/node-ts-web-starter dev`.  
-3. Access the client at the Vite dev URL (usually `http://localhost:5173`).  
-4. When you change `src/routes/` files, TanStack Router regenerates the route tree using the plugin defined in `routeTree.gen.ts`.
+1. Start the API: `pnpm --filter @awwwkshay/node-ts-api-starter dev`.
+2. Start the web app: `pnpm --filter @awwwkshay/node-ts-web-starter dev`.
+3. Visit the Vite URL (usually `http://localhost:5173`). Changes to `src/routes/` regenerate `routeTree.gen.ts` via the plugin configured in `vite.config.ts`.
 
-## Testing & Quality
+## Testing & quality
 
-- `vitest`: tests and snapshots live near components; run `pnpm --filter @awwwkshay/node-ts-web-starter test`.  
-- `oxfmt`/`oxlint`: formatting and linting match the API package and ensure consistent style across the monorepo.  
-- `pnpm --filter @awwwkshay/node-ts-web-starter lint` automatically fixes fixable issues while still running type-aware checks.
+- `vitest`: run `pnpm --filter @awwwkshay/node-ts-web-starter test` to execute unit/integration suites.
+- `oxfmt` / `oxlint`: formatting and lint commands keep this package consistent with the API/auth services.
+- Tailwind + Motion ensure the UI stays responsive and expressive without relying on default styles.
 
 ## Deployment
 
-1. `pnpm --filter @awwwkshay/node-ts-web-starter build` to compile.  
-2. Serve via `pnpm --filter @awwwkshay/node-ts-web-starter start` + set `NITRO_API_BASE_URL` to the production API URL.  
-3. Alternatively, export `NITRO_PORT`/`NITRO_API_BASE_URL` and run `node ./dist/server/index.mjs` yourself.  
-For container deployments, copy `dist/` and `node_modules/.pnpm` into the image, expose `NITRO_PORT`, and run the same start command.
+1. Build the SSR bundle: `pnpm --filter @awwwkshay/node-ts-web-starter build`.
+2. Set `NITRO_API_BASE_URL` to your production API and run `pnpm --filter @awwwkshay/node-ts-web-starter start` or `node ./dist/server/index.mjs`.
+3. Container deployments should copy `dist/`, install production deps, expose `NITRO_PORT`, and run the same start command.
 
-## Learn More
-
-- [TanStack Router Docs](https://tanstack.com/router)  
-- [TanStack Query Docs](https://tanstack.com/query)  
-- [Vite](https://vite.dev) and [Nitro](https://nitro.unjs.io) for SSR builds  
-- See `apps/api` for the matching backend API that provides `/todos`, `/info`, and health routes.
-
-Happy building! 🚀
+Generated on 2025-12-11
