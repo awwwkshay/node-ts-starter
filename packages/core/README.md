@@ -1,104 +1,67 @@
 # @awwwkshay/node-ts-core
 
-Shared types, schemas, and helper utilities consumed across `apps/api` and `apps/web` in the `node-ts-starter` monorepo. This thin package stays framework-agnostic so both server and client code can rely on the same contracts without duplicating logic.
+Shared schemas, types, and helpers consumed by `apps/api`, `apps/web`, and any additional workspace packages.
 
-## Key Exports
+## Key exports
 
-- `todoSchema`: a `zod` schema describing each TODO item (`id`, `title`, `completed`). The API returns data that matches this schema, and the web client shares it for validation and inference.
-- `types`: any additional shared types can be exported from `src/index.ts` so that every workspace consumer gets type-safe access with a single import path.
-- `helpers` (future): keep this package lean, but add small shared functions here once multiple apps need the same logic.
+- `todoSchema`: A `zod` schema describing each TODO item (`id`, `title`, `completed`).
+- Re-exported types/helpers inside `src/index.ts` so downstream packages can import everything from a single entry point.
+- Build outputs (CJS + ESM + `.d.ts`) under `dist/` so consuming apps stay aligned without duplicating code.
 
-## Installation
+## Installation & usage
 
-Use the workspace protocol when referencing this package in a consuming project so tooling can keep sources in sync:
+Install workspace dependencies from the repo root:
 
 ```bash
 pnpm install
 ```
 
-Then add the dependency with:
-
-```json
-{
-  "dependencies": {
-    "@awwwkshay/node-ts-core": "workspace:*"
-  }
-}
-```
-
-Any workspace package that imports from `@awwwkshay/node-ts-core` will receive the latest build from `packages/core` without publishing to npm.
-
-## Usage Example
+Then import the schema anywhere in the workspace:
 
 ```ts
 import { todoSchema } from "@awwwkshay/node-ts-core";
 
 const parsed = todoSchema.safeParse({
   id: "1",
-  title: "Sync shared schema",
+  title: "Share schemas",
   completed: false,
 });
-
-if (!parsed.success) {
-  console.error(parsed.error);
-}
-
-type Todo = z.infer<typeof todoSchema>;
 ```
 
-Because this package exports both CJS and ESM builds via `exports` and `module`/`main`, consuming code can use whichever module system it prefers.
+The package exposes both ESM (`dist/index.mjs`) and CJS (`dist/index.cjs`) bundles via the `exports` field so consumers can choose their preferred loader.
 
-## Development Workflow
-
-Run commands from the package root (or via `pnpm --filter @awwwkshay/node-ts-core <script>` from the repository root):
+## Development workflow
 
 | Script | Description |
 | --- | --- |
-| `pnpm dev` | Watch sources and rebuild with `tsup --watch` (useful during cross-package development). |
-| `pnpm build` | Compile TypeScript to `dist/` (ESM + CJS + d.ts) using `tsup`. |
-| `pnpm clean` | Delete `dist/` artifacts created by the build. |
-| `pnpm type-check` | Run `tsc --noEmit` to verify types without building. |
-| `pnpm format` / `pnpm lint` | Run `oxfmt`/`oxlint` to keep formatting and lint rules consistent across the workspace. |
+| `pnpm --filter @awwwkshay/node-ts-core dev` | Run `tsdown --watch` for incremental builds. |
+| `pnpm --filter @awwwkshay/node-ts-core build` | Run `tsdown` once to emit CJS/ESM and TypeScript declarations. |
+| `pnpm --filter @awwwkshay/node-ts-core type-check` | Run `tsc --noEmit`. |
+| `pnpm --filter @awwwkshay/node-ts-core clean` | Remove `dist/`. |
+| `pnpm --filter @awwwkshay/node-ts-core format` / `format:check` | Run `oxfmt`. |
+| `pnpm --filter @awwwkshay/node-ts-core lint` | Run `oxlint` (type-aware). |
 
-The shared build outputs are committed via `dist/`, so remember to rebuild the package before pushing changes that other workspaces depend on.
+After rebuilding, commit both `src/` and the generated `dist/` files so the other packages immediately consume the updated artifacts.
 
-## Project Structure
+## Project structure
 
-```text
+```bash
 packages/core/
-├── src/index.ts        # Re-exports shared schemas/helpers
+├── src/index.ts        # Re-export shared schemas/helpers
 ├── src/todo.ts         # TODO schema definition
 ├── package.json        # Scripts + build config
-├── tsup.config.ts      # tsup build options
+├── tsdown.config.ts    # tsdown build options
 └── tsconfig.json       # Compiler settings
 ```
 
-### tsup Configuration
+`tsdown` already outputs CJS (`dist/index.cjs`), ESM (`dist/index.mjs`), and typings (`dist/index.d.mts`). Adjust `tsdown.config.ts` only if you need extra entry points or custom bundling logic.
 
-`tsup.config.ts` already produces:
+## Testing contracts
 
-- CJS and ESM bundles under `dist/`.
-- Type declarations for each export.
-- Minified builds optimized for tree-shaking.
-
-Adjust `tsup.config.ts` only if you add new file entry points or need custom bundling logic.
-
-## Testing Contracts
-
-Because this package exposes schemas that validate runtime data, treat each schema change as a potential breaking change. Update both:
-
-1. The schema definition in `src/`.
-2. Any consumer that relies on the shape (search for `todoSchema` across the repo).
-
-Use `pnpm type-check` and the dependent apps' lint/build scripts to ensure the change propagates cleanly.
+Treat schema changes as potential breaking changes. Update dependent applications (especially `apps/api` and `apps/web`) after modifying exports and rerun their build/lint scripts to ensure everything still type checks.
 
 ## Publishing
 
->This package is workspace-only. No registry publishing is required. Keep the version in sync manually if you ever need to publish separately.
+This package is workspace-local. No registry publishing is required—keep the version in sync manually if you ever extract it for npm.
 
-## Contributing
-
-1. Add your schema/helper inside `src/`.
-2. Re-export it from `src/index.ts`.  
-3. Run `pnpm build` and ensure consuming packages (e.g., `apps/api`, `apps/web`) rebuild against the updated `dist/`.  
-4. Commit both source and generated `dist/` files so the rest of the workspace sees your export.
+Generated on 2025-12-11

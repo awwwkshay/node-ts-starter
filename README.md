@@ -1,59 +1,76 @@
 # node-ts-starter
 
-A pnpm-powered monorepo that hosts a TanStack-powered React web client (`apps/web/`), a Hono-based API server (`apps/api/`), and shared TypeScript schemas/utilities (`packages/core/`). Infrastructure manifests and Tilt recipes live under `infrastructure/`, giving you a complete full-stack starting point with modern routing, schema validation, and Kubernetes-friendly tooling.
+A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based API, a Better Auth session service, shared TypeScript contracts, and Kubernetes-ready infrastructure so you can experiment with full-stack patterns from a single workspace.
 
-## What's in the workspace
+## Workspace layout
 
-- **`apps/api/`** – Hono server that validates environment variables via `zod`, exposes `/todos`/`/info`, and relies on `packages/core` for shared schemas.
-- **`apps/web/`** – Vite + React 19 + TanStack Router/Query client with SSR support via Nitro; it fetches the API through the `NITRO_API_BASE_URL` contract.
-- **`packages/core/`** – Shared schemas (e.g., `todoSchema`) and helpers, built with `tsup` to emit both ESM and CJS bundles consumed by the apps.
-- **`infrastructure/`** – Tiltfile and Kubernetes manifests (`k8s/`) for bringing the stack up locally or deploying it to a cluster.
+- `apps/api/` – Hono server that validates every request payload with `zod`, relies on `packages/core` for shared schemas, and exposes `/todos`, `/info`, and health probes.
+- `apps/auth/` – Less than a dozen routes backed by Better Auth and Drizzle, exposing OpenAPI docs at `/docs` plus JWT/cookie tooling.
+- `apps/web/` – Vite + React 19 + TanStack Router/Query UI with Nitro SSR and shared schema validation from `packages/core`.
+- `apps/postgres/` – Helper script used by Tilt or custom Docker workflows to create multiple Postgres databases via the official image.
+- `packages/core/` – Shared `todoSchema`, helpers, and `tsdown` output (CJS + ESM) consumed by every app.
+- `infrastructure/` – Tiltfile, Helm charts, and Kubernetes manifests (`infrastructure/k8s/`) to bring the stack up locally or deploy it to a cluster.
 
 ## Prerequisites
 
-1. Node.js >= 22.13.0 (see `package.json` engines).
-2. pnpm@10.13.1 matching the lockfile.
-3. [`Tilt`](https://tilt.dev) if you plan to use the `dev:k8s` workflow.
+1. **Node.js** ≥ 24.12.0 (`package.json` `engines`).
+2. **pnpm** 10.24.0 (root `packageManager`).
+3. **Docker** when you need Postgres containers or Tilt’s cluster emulation.
+4. **Tilt** (`pnpm dev:k8s`) for the Kubernetes-style dev workflow.
 
-Install dependencies once from the repo root:
+## Getting started
 
 ```bash
 pnpm install
 ```
 
-## Running the apps
+1. Copy `apps/api/example.env`, `apps/auth/example.env`, and `apps/web/example.env` into their respective directories and fill in secrets (database URLs, client origins, `BETTER_AUTH_SECRET`, etc.)
+2. Run any app individually via `pnpm --filter <package> dev` or start the whole stack with `pnpm dev:k8s` (Tilt handles the `infrastructure/k8s` manifests + Postgres helper).
+3. For production builds, use `pnpm --filter <package> build` or orchestrate across packages with `pnpm turbo run build`.
 
-- **API:** `pnpm --filter @awwwkshay/node-ts-api-starter dev` – runs `tsx watch src/index.ts`. Ensure `.env` (example in `apps/api/README.md`) is present when running outside Tilt.
-- **Web:** `pnpm --filter @awwwkshay/node-ts-web-starter dev` – launches Vite with TanStack Router devtools. Set `NITRO_API_BASE_URL` (defaults to `http://localhost:8000`) if you point the client at another API.
-- **Full stack (Tilt):** `pnpm dev:k8s` – executes `tilt up` from the root for Kubernetes-style development (requires Tilt installed).
+## Running the services
 
-## Workspace utilities
+| Service | Dev command | Notes |
+| --- | --- | --- |
+| API | `pnpm --filter @awwwkshay/node-ts-api-starter dev` | `rolldown --watch` + `nodemon dist/server.js`, CORS-locked via `CLIENT_URLS`. |
+| Auth | `pnpm --filter @awwwkshay/node-ts-auth-starter dev` | Better Auth surface + Drizzle; requires `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `DATABASE_URL`. |
+| Web | `pnpm --filter @awwwkshay/node-ts-web-starter dev` | Vite + Nitro dev server, proxies to the API via `NITRO_API_BASE_URL`. |
+| Full stack | `pnpm dev:k8s` | Tilt orchestrates everything, including the `apps/postgres` script that seeds extra databases. |
+
+## Tilt & Kubernetes
+
+`pnpm dev:k8s` runs Tilt from the workspace root. The `Tiltfile` declares services for API, Auth, Web, Postgres, and any extra Kubernetes resources under `infrastructure/k8s/` (deployments, services, secrets). The optional Helm charts live under `infrastructure/helm/`.
+
+## Shared tooling
+
+- `packages/core` publishes shared schemas via `tsdown` so both API and web clients always share the same contracts.
+- `turbo.json` orchestrates cross-package builds/tests via `pnpm turbo run build`, `lint`, `test`, and `clean`.
+- Postgres multi-database creation happens through `apps/postgres/create-multiple-postgresql-databases.sh`, triggered by setting `POSTGRES_MULTIPLE_DATABASES` before Tilt or Docker starts the container.
+
+## Root scripts
 
 | Script | Description |
 | --- | --- |
-| `pnpm clean:dist` | Removes `dist/` from all apps/packages. |
-| `pnpm clean:node_modules` | Removes per-package `node_modules`. |
-| `pnpm clean:all` | Runs both `clean:dist` and `clean:node_modules`. |
-| `pnpm dev:k8s` | Starts Tilt so both apps (and any declared k8s resources) run together. |
+| `pnpm clean:dist` | Remove every `dist/` folder across `apps/` and `packages/`. |
+| `pnpm clean:node_modules` | Drop every `node_modules` under `apps/` and `packages/`. |
+| `pnpm clean:all` | Runs both of the above. |
+| `pnpm dev:k8s` | Starts Tilt for the Kubernetes-like dev experience. |
 
-Each package also exposes format/lint/build scripts; see the sub-readmes for instructions such as `pnpm --filter @awwwkshay/node-ts-web-starter test` or `pnpm --filter @awwwkshay/node-ts-api-starter lint`.
+## Environment templates
 
-## Shared environment notes
+| App | Template |
+| --- | --- |
+| API | `apps/api/example.env` |
+| Auth | `apps/auth/example.env` |
+| Web | `apps/web/example.env` |
 
-- The API validates `NODE_ENV`, `PORT`, and `CLIENT_URLS` via `apps/api/src/schemas/env.ts` before listening. Use a `.env` file in development or rely on your platform’s secrets in production.
-- The web app expects `NITRO_API_BASE_URL` for API calls and `NITRO_PORT` when running the preview/start command.
+Copy the template, remove the leading `#` comments, and update the values to match your local credentials or hosted secrets.
 
 ## Contributing
 
-1. Make your code changes inside the relevant package (`apps/api`, `apps/web`, or `packages/core`).
-2. Rebuild any touched package (`pnpm build` or `pnpm --filter <package> build`).
-3. Run lint/format scripts to keep the workspace consistent (`oxfmt`/`oxlint` are already configured in each package).
-4. Update `packages/core/dist` whenever the shared exports change so other workspaces immediately consume the new artifacts.
+1. Make changes in the package that owns the feature (`apps/api`, `apps/auth`, `apps/web`, or `packages/core`).
+2. Rebuild the touched package (`pnpm --filter <package> build`).
+3. Run `pnpm --filter <package> format` / `lint` to stay consistent.
+4. Update `packages/core/dist` whenever shared exports change so the apps consume the latest bundle.
 
-## Learn more
-
-- `apps/api/README.md` – API-specific configs and endpoints.
-- `apps/web/README.md` – Front-end details (routing, TanStack integrations, deployment hints).
-- `packages/core/README.md` – Shared schema/contracts reference.
-
-Happy building! 🎯
+Generated on 2025-12-11
