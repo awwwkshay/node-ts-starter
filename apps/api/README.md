@@ -40,12 +40,12 @@ All variables are validated through `apps/api/src/schemas/env.ts` (`zod`). The s
 ```env
 NODE_ENV=development    # must be one of development/testing/production
 PORT=8000
-CLIENT_URL=http://localhost:4173   # adjust for your web client
+CLIENT_URLS=http://localhost:4173   # adjust for your web client
 ```
 
 - `NODE_ENV` defaults to `production` when not explicitly set. During development the server imports `dotenv` to populate values from `.env`.
 - `PORT` defaults to `8000` so the API can run alongside other services.
-- `CLIENT_URL` is used by the `cors` middleware to restrict requests to your front-end host.
+- `CLIENT_URLS` is used by the `cors` middleware to restrict requests to your front-end host.
 
 ## Architecture
 
@@ -59,18 +59,18 @@ CLIENT_URL=http://localhost:4173   # adjust for your web client
 | Method | Path | Description |
 | --- | --- | --- |
 | `GET /` | `/` | Returns `Hello Hono` and verifies the server is reachable. |
-| `GET /info` | `/info` | Echoes active `NODE_ENV`, listening `PORT`, and allowed `CLIENT_URL`. Useful for readiness checks. |
+| `GET /info` | `/info` | Echoes active `NODE_ENV`, listening `PORT`, and allowed `CLIENT_URLS`. Useful for readiness checks. |
 | `GET /todos` | `/todos` | Returns a static TODO list validated with `todoSchema`. Replace this stub with your datastore or downstream service as needed. |
 
 All endpoints are typed through Hono’s `Hono<{ Bindings; Variables }>` generic to keep the handler context strict.
 
 ## Development Notes
 
-- **CORS:** `@hono/cors` allows only the configured `CLIENT_URL` while still allowing credentials and a 10-minute preflight cache (`maxAge: 600`).
+- **CORS:** `@hono/cors` allows only the configured `CLIENT_URLS` while still allowing credentials and a 10-minute preflight cache (`maxAge: 600`).
 - **Shared schema:** `todoSchema` comes from `@awwwkshay/node-ts-core`, demonstrating how to pull shared contracts from the `packages/` area.
 - **Logging:** On startup, the server logs the env payload when `NODE_ENV=development` to aid debugging.
 
-To tie the API with the web app locally, run `pnpm --filter @awwwkshay/node-ts-api-starter dev` and the web client (e.g., `pnpm --filter @awwwkshay/node-ts-web-starter dev`). The API is CORS-locked to the front-end so adjust `CLIENT_URL` if you use a different port.
+To tie the API with the web app locally, run `pnpm --filter @awwwkshay/node-ts-api-starter dev` and the web client (e.g., `pnpm --filter @awwwkshay/node-ts-web-starter dev`). The API is CORS-locked to the front-end so adjust `CLIENT_URLS` if you use a different port.
 
 ## Deployment
 
@@ -82,7 +82,7 @@ To tie the API with the web app locally, run `pnpm --filter @awwwkshay/node-ts-a
 ## Troubleshooting
 
 - `ValidationError: ZodError` during startup usually means an env var is missing or malformed — double-check your `.env` file or hosting config.
-- If CORS rejects requests, confirm `CLIENT_URL` matches the `Origin` header from the browser.
+- If CORS rejects requests, confirm `CLIENT_URLS` matches the `Origin` header from the browser.
 
 ## Learn More
 

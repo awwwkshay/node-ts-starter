@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 
-import { todosTable } from "./schema.js";
+import { todosTable } from "./schema";
 
 const useSsl = process.env.DB_SSL?.toLowerCase() === "true";
 

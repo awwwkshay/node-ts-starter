@@ -44,7 +44,7 @@ FROM setup AS development
 
 ENV NODE_ENV=development
 ENV PORT=8000
-ENV CLIENT_URL=http://localhost:3000
+ENV CLIENT_URLS=http://localhost:3000
 
 WORKDIR /app
 
@@ -67,7 +67,7 @@ FROM node:22-slim AS production
 
 ENV NODE_ENV=production
 ENV PORT=8000
-ENV CLIENT_URL=http://localhost:3000
+ENV CLIENT_URLS=http://localhost:3000
 
 WORKDIR /app
 

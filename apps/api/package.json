@@ -3,15 +3,19 @@
   "version": "0.0.1",
   "description": "API server for Node.js and TypeScript with Hono",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "lint": "oxlint . --fix --type-aware --type-check",
     "clean": "rimraf dist",
-    "dev": "NODE_ENV=development tsx watch src/index.ts",
-    "start": "NODE_ENV=production node dist/index.js",
-    "build": "tsc -p .",
+    "build": "rolldown -c rolldown.config.ts",
+    "watch": "rolldown -c rolldown.config.ts --watch",
+    "run:nodemon": "nodemon --exec node dist/server.js",
+    "dev": "concurrently \"pnpm watch\" \"pnpm run:nodemon\"",
+    "start": "NODE_ENV=production node dist/server.js",
+    "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output src/db/auth-schema.ts --config src/lib/auth.ts",
+    "auth:secret": "pnpm dlx @better-auth/cli@latest secret",
     "db:generate": "pnpm exec drizzle-kit generate",
     "db:migrate": "pnpm exec drizzle-kit migrate",
     "db:drop": "pnpm exec drizzle-kit drop"
@@ -28,6 +32,7 @@
     "@types/pg": "^8.15.6",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
-    "tsx": "^4.21.0"
+    "rolldown": "1.0.0-beta.53",
+    "rollup-plugin-tsconfig-paths": "^1.5.2"
   }
 }

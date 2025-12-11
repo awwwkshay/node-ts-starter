@@ -38,8 +38,4 @@
   "include": [
     "src"
   ],
-  "exclude": [
-    "drizzle.config.ts",
-    "dist"
-  ]
 }

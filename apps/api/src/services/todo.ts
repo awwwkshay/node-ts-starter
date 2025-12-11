@@ -1,7 +1,7 @@
 import { todosTable } from "@awwwkshay/node-ts-core";
 import { eq } from "drizzle-orm";
 
-import { db } from "../db/drizzle.js";
+import { db } from "@/db";
 
 type TodoSelect = typeof todosTable.$inferSelect;
 type TodoInsert = typeof todosTable.$inferInsert;

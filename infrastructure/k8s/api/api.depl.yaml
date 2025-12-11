@@ -32,7 +32,7 @@ spec:
                 configMapKeyRef:
                   name: api-config
                   key: port
-            - name: CLIENT_URL
+            - name: CLIENT_URLS
               valueFrom:
                 configMapKeyRef:
                   name: api-config
