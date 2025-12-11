@@ -11,6 +11,7 @@ const config = defineConfig({
 		devtools(),
 		nitro({
 			devServer: {
+				hostname: "0.0.0.0",
 				port: 3000,
 			},
 			output: {
@@ -27,6 +28,14 @@ const config = defineConfig({
 		tanstackStart(),
 		viteReact(),
 	],
+
+	server: {
+		host: true,
+		port: 3000,
+		hmr: {
+			host: "0.0.0.0",
+		},
+	},
 });
 
 export default config;

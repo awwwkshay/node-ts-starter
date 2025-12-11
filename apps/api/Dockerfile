@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------
 # 1. Base setup (pnpm + workspace files)
 # -------------------------------------------------------------------
-FROM node:22-slim AS setup
+FROM node:24-slim AS setup
 
 WORKDIR /app
 RUN npm install -g pnpm
@@ -64,7 +64,7 @@ CMD ["pnpm","dev"]
 # -------------------------------------------------------------------
 # 5. Production Stage (small + built only)
 # -------------------------------------------------------------------
-FROM node:22-slim AS production
+FROM node:24-slim AS production
 
 ENV NODE_ENV=production
 ENV PORT=8000
