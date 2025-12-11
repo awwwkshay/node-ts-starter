@@ -1,9 +1,10 @@
 {
   "name": "@awwwkshay/node-ts-auth-starter",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/server.js",
+  "description": "A TypeScript authentication starter using Hono, Drizzle ORM, and Better Auth for Node.js.",
   "type": "module",
+  "main": "dist/server.js",
+  "readme": "./README.md",
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
@@ -20,16 +21,10 @@
     "db:migrate": "pnpm exec drizzle-kit migrate",
     "db:drop": "pnpm exec drizzle-kit drop"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.24.0",
   "devDependencies": {
     "@better-auth/cli": "^1.4.6",
     "@types/pg": "^8.15.6",
-    "drizzle-kit": "^0.31.8",
-    "rolldown": "1.0.0-beta.53",
-    "rollup-plugin-tsconfig-paths": "^1.5.2"
+    "drizzle-kit": "^0.31.8"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",

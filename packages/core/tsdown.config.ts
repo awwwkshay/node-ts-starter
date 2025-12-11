@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
 	// Entry point(s)
@@ -9,9 +9,6 @@ export default defineConfig({
 
 	// Generate TypeScript declarations
 	dts: true,
-
-	// Code splitting (better for tree-shaking)
-	splitting: false,
 
 	// Generate sourcemaps
 	sourcemap: true,
@@ -33,7 +30,4 @@ export default defineConfig({
 
 	// Watch mode options
 	watch: false,
-
-	// Enable experimental features
-	experimentalDts: false,
 });

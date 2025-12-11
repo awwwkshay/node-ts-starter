@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "main": "./dist/server/index.mjs",
+  "readme": "./README.md",
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",

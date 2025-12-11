@@ -1,9 +1,10 @@
 {
   "name": "@awwwkshay/node-ts-api-starter",
   "version": "0.0.1",
-  "description": "API server for Node.js and TypeScript with Hono",
+  "description": "API Starter built with Node.js, Hono, Drizzle ORM and TypeScript",
   "type": "module",
   "main": "dist/server.js",
+  "readme": "./README.md",
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
@@ -31,8 +32,6 @@
   "devDependencies": {
     "@types/pg": "^8.15.6",
     "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.8",
-    "rolldown": "1.0.0-beta.53",
-    "rollup-plugin-tsconfig-paths": "^1.5.2"
+    "drizzle-kit": "^0.31.8"
   }
 }
