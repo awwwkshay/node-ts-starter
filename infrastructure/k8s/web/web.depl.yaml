@@ -49,8 +49,8 @@ spec:
                   key: vite_app_name
           resources:
             requests:
-              cpu: "100m"
+              cpu: "1500m"
               memory: "128Mi"
             limits:
-              cpu: "500m"
+              cpu: "1500m"
               memory: "2Gi"

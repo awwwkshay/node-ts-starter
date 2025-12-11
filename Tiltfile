@@ -1,4 +1,4 @@
-APPS = ["api", "web"]
+APPS = ["api", "web", "auth"]
 
 def ignore_other_apps(current):
     ignored = []
@@ -20,11 +20,13 @@ docker_build(
 )
 
 k8s_yaml([
-    'infrastructure/k8s/namespace.yaml',    
+    'infrastructure/k8s/namespace.yaml',
+    'infrastructure/k8s/rbac.yaml',    
     'infrastructure/k8s/api/api.depl.yaml',
     'infrastructure/k8s/api/api.service.yaml',
     'infrastructure/k8s/api/api.config.yaml',
     'infrastructure/k8s/api/api.secret.yaml',
+    'infrastructure/k8s/api/api.job.yaml',
     ])
 
 k8s_resource(
@@ -57,8 +59,32 @@ k8s_resource(
     port_forwards=['3000:3000','9001:9229']
 )
 
-# Postgres
+# auth
+docker_build(
+    ref="ghcr.io/awwwkshay/node-ts-auth-starter",
+    context=".",
+    dockerfile="./apps/auth/Dockerfile",
+    live_update=[
+        sync("./apps/auth/src/", "/app/apps/auth/src"),
+    ],
+    ignore=ignore_other_apps("auth"),
+    target="development"
+)
 
+k8s_yaml([
+    'infrastructure/k8s/auth/auth.depl.yaml',
+    'infrastructure/k8s/auth/auth.service.yaml',
+    'infrastructure/k8s/auth/auth.config.yaml',
+    'infrastructure/k8s/auth/auth.secret.yaml',
+    'infrastructure/k8s/auth/auth.job.yaml', 
+    ])
+
+k8s_resource(
+    'auth-deployment',
+    port_forwards=['4000:4000','9002:9229']
+)
+
+# Postgres
 k8s_yaml([  
     'infrastructure/k8s/postgres/postgres.depl.yaml',
     'infrastructure/k8s/postgres/postgres.service.yaml',
