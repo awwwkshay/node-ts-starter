@@ -4,4 +4,4 @@ export {
 	getTodos,
 	getTodoById,
 	updateTodo,
-} from "./todo.js";
+} from "./todo";

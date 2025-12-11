@@ -1,5 +1,5 @@
 // src/config/env.ts
-import { z } from "zod";
+import { z } from "zod/v4";
 
 export const envSchema = z.object({
 	NITRO_API_BASE_URL: z.string(),

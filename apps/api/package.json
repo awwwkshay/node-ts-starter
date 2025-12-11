@@ -1,16 +1,25 @@
 {
   "name": "@awwwkshay/node-ts-api-starter",
   "version": "0.0.1",
-  "description": "API server for Node.js and TypeScript with Hono",
+  "description": "API Starter built with Node.js, Hono, Drizzle ORM and TypeScript",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
+  "readme": "./README.md",
   "scripts": {
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
     "lint": "oxlint . --fix --type-aware --type-check",
     "clean": "rimraf dist",
-    "dev": "NODE_ENV=development tsx watch src/index.ts",
-    "build": "tsc -p ."
+    "build": "rolldown -c rolldown.config.ts",
+    "watch": "rolldown -c rolldown.config.ts --watch",
+    "run:nodemon": "nodemon --exec node dist/server.js",
+    "dev": "NODE_ENV=development concurrently \"pnpm watch\" \"pnpm run:nodemon\"",
+    "start": "NODE_ENV=production node dist/server.js",
+    "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output src/db/auth-schema.ts --config src/lib/auth.ts",
+    "auth:secret": "pnpm dlx @better-auth/cli@latest secret",
+    "db:generate": "pnpm exec drizzle-kit generate",
+    "db:migrate": "pnpm exec drizzle-kit migrate",
+    "db:drop": "pnpm exec drizzle-kit drop"
   },
   "dependencies": {
     "@awwwkshay/node-ts-core": "workspace:*",
@@ -23,7 +32,6 @@
   "devDependencies": {
     "@types/pg": "^8.15.6",
     "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.8",
-    "tsx": "^4.21.0"
+    "drizzle-kit": "^0.31.8"
   }
 }

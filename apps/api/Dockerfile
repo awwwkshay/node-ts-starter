@@ -44,7 +44,8 @@ FROM setup AS development
 
 ENV NODE_ENV=development
 ENV PORT=8000
-ENV CLIENT_URL=http://localhost:3000
+ENV CLIENT_URLS=http://localhost:3000
+ENV DATABASE_URL="postgresql://postgres:Akshay@123@host.docker.internal:5432/app"
 
 WORKDIR /app
 
@@ -57,7 +58,7 @@ RUN pnpm install --frozen-lockfile
 EXPOSE ${PORT} 9229
 
 WORKDIR /app/apps/api
-CMD ["pnpm","tsx", "watch", "src/index.ts"]
+CMD ["pnpm","dev"]
 
 
 # -------------------------------------------------------------------
@@ -67,7 +68,8 @@ FROM node:22-slim AS production
 
 ENV NODE_ENV=production
 ENV PORT=8000
-ENV CLIENT_URL=http://localhost:3000
+ENV CLIENT_URLS=http://localhost:3000
+ENV DATABASE_URL="postgresql://postgres:Akshay@123@host.docker.internal:5432/app"
 
 WORKDIR /app
 
@@ -79,9 +81,11 @@ COPY --from=packages_builder /app/packages ./packages
 COPY --from=api_builder /app/apps/api ./apps/api
 
 # Install production-only deps
-RUN npm install -g pnpm && pnpm install --frozen-lockfile --prod
+# Install production dependencies
+RUN npm install -g pnpm \
+    && pnpm install --frozen-lockfile --prod --ignore-scripts
 
 EXPOSE ${PORT}
 
 WORKDIR /app/apps/api
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server.js"]

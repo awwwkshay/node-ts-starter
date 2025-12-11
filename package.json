@@ -1,29 +1,47 @@
 {
-  "name": "node-ts-starter",
+  "name": "@awwwkshay/node-ts-starter",
   "version": "1.0.0",
   "description": "A monorepo for Web & API applications built with Node.js and TypeScript",
-  "main": "index.js",
+  "readme": "./README.md",
   "scripts": {
     "clean:dist": "pnpm rimraf ./apps/**/dist ./packages/**/dist",
     "clean:node_modules": "pnpm rimraf ./apps/**/node_modules ./packages/**/node_modules",
     "clean:all": "pnpm clean:dist && pnpm clean:node_modules",
-    "dev:k8s": "tilt up"
+    "dev:k8s": "tilt up",
+    "prepare": "husky"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "nodejs",
+    "typescript",
+    "monorepo",
+    "starter",
+    "hono",
+    "drizzle-orm",
+    "better-auth"
+  ],
+  "author": {
+    "name": "Akshay Priyadarshi",
+    "email": "akshayp1904@outlook.com"
+  },
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "nodemon": "^3.1.11",
     "oxfmt": "^0.16.0",
     "oxlint": "^1.31.0",
     "oxlint-tsgolint": "^0.8.3",
     "rimraf": "^6.1.2",
+    "rolldown": "1.0.0-beta.53",
+    "rollup-plugin-tsconfig-paths": "^1.5.2",
+    "tsdown": "^0.17.2",
     "tsx": "^4.7.1",
     "turbo": "^2.6.3",
     "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.24.0",
   "engines": {
-    "node": ">=v10.24.0"
+    "node": ">=v24.12.0"
   }
 }

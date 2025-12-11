@@ -40,7 +40,7 @@ Each package also exposes format/lint/build scripts; see the sub-readmes for ins
 
 ## Shared environment notes
 
-- The API validates `NODE_ENV`, `PORT`, and `CLIENT_URL` via `apps/api/src/schemas/env.ts` before listening. Use a `.env` file in development or rely on your platform’s secrets in production.
+- The API validates `NODE_ENV`, `PORT`, and `CLIENT_URLS` via `apps/api/src/schemas/env.ts` before listening. Use a `.env` file in development or rely on your platform’s secrets in production.
 - The web app expects `NITRO_API_BASE_URL` for API calls and `NITRO_PORT` when running the preview/start command.
 
 ## Contributing

@@ -86,8 +86,9 @@ COPY package.json pnpm-lock.yaml ./
 COPY --from=packages_builder /app/packages ./packages
 COPY --from=web_builder /app/apps/web ./apps/web
 
-# Install production-only deps
-RUN npm install -g pnpm && pnpm install --frozen-lockfile --prod
+# Install production dependencies
+RUN npm install -g pnpm \
+    && pnpm install --frozen-lockfile --prod --ignore-scripts
 
 EXPOSE ${NITRO_PORT}
 

@@ -1,6 +1,6 @@
-import { envSchema, type Env } from "../schemas/index.js";
+import { appEnvSchema, type AppEnv } from "@/schemas";
 
-export let envVars: Env;
+export let envVars: AppEnv;
 
 export const loadEnvVars = async () => {
 	const dotenv = await import("dotenv");
@@ -9,5 +9,5 @@ export const loadEnvVars = async () => {
 };
 
 export const setEnvVars = () => {
-	envVars = envSchema.parse(process.env);
+	envVars = appEnvSchema.parse(process.env);
 };
