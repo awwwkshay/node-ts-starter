@@ -29,6 +29,7 @@ export const auth = betterAuth({
 	plugins: [
 		openAPI({
 			theme: "deepSpace",
+			path: "docs",
 		}),
 		jwt(),
 	],

@@ -37,6 +37,9 @@
     "clean": {
       "cache": false,
       "outputs": []
+    },
+    "db:migrate": {
+      "dependsOn": ["^db:migrate"]
     }
   }
 }
