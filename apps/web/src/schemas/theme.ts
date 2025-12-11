@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod/v4";
 
 const light = z.literal("light");
 const dark = z.literal("dark");

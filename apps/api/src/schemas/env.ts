@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod/v4";
 
 export const appEnvSchema = z.object({
 	NODE_ENV: z
@@ -6,7 +6,7 @@ export const appEnvSchema = z.object({
 		.default("production"),
 	PORT: z.coerce.number().default(8000),
 	CLIENT_URLS: z.string(),
-	DATABASE_URL: z.url()
+	DATABASE_URL: z.url(),
 });
 
 export type AppEnv = z.infer<typeof appEnvSchema>;

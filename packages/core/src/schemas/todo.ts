@@ -3,7 +3,7 @@ import {
 	createUpdateSchema,
 	createInsertSchema,
 } from "drizzle-zod";
-import z from "zod";
+import z from "zod/v4";
 
 import { todosTable } from "../db/schema";
 

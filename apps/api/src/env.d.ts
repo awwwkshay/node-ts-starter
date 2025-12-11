@@ -4,8 +4,8 @@ declare global {
 		interface ProcessEnv {
 			readonly NODE_ENV: string;
 			readonly PORT: string;
-            readonly DATABASE_URL: string;
-            readonly CLIENT_URLS: string;
+			readonly DATABASE_URL: string;
+			readonly CLIENT_URLS: string;
 		}
 	}
 }

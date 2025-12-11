@@ -15,7 +15,7 @@ export const db = drizzle(pool, {
 		sessions,
 		users,
 		verifications,
-		jwkss
+		jwkss,
 	},
 	casing: "snake_case",
 });

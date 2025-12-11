@@ -6,7 +6,7 @@ import {
 	updateTodo,
 	getTodoById,
 	deleteTodo,
-} from "../services/index.js";
+} from "@/services";
 
 const todosRouter = new Hono();
 

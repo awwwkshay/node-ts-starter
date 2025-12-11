@@ -22,7 +22,7 @@ export const auth = betterAuth({
 			sessions,
 			users,
 			verifications,
-			jwkss
+			jwkss,
 		},
 	}),
 	appName: "auth",
@@ -30,20 +30,20 @@ export const auth = betterAuth({
 		openAPI({
 			theme: "deepSpace",
 		}),
-		jwt()
+		jwt(),
 	],
 	emailAndPassword: {
 		enabled: true,
 	},
 	advanced: {
-    cookies: {
-      sessionToken: {
-        attributes: {
-          sameSite: "none",
-          secure: true,
-          partitioned: true // New browser standards will mandate this for foreign cookies
-        }
-      }
-    }
-  }
+		cookies: {
+			sessionToken: {
+				attributes: {
+					sameSite: "none",
+					secure: true,
+					partitioned: true, // New browser standards will mandate this for foreign cookies
+				},
+			},
+		},
+	},
 });
