@@ -28,7 +28,7 @@ const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 app.use(
 	"*",
 	cors({
-		origin: [envVars.CLIENT_URL],
+		origin: [envVars.CLIENT_URLS],
 		maxAge: 600,
 		credentials: true,
 	}),
@@ -37,14 +37,6 @@ app.use(
 // configure routes
 app.get("/health", (c) => {
 	return c.json({ status: "OK" });
-});
-
-app.get("/info", (c) => {
-	return c.json({
-		NODE_ENV,
-		PORT: envVars.PORT,
-		CLIENT_URL: envVars.CLIENT_URL,
-	});
 });
 
 app.route("/todos", todosRouter);
