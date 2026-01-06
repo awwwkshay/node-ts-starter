@@ -10,7 +10,26 @@ const getStoredUserTheme = createIsomorphicFn()
 	.server((): UserTheme => "system")
 	.client((): UserTheme => {
 		const stored = localStorage.getItem(themeStorageKey);
-		return userThemeSchema.parse(stored);
+		if (!stored) return "system";
+
+		// Handle cases where the stored value might be a JSON array (e.g. ["light"])
+		// or a plain string ("light"). Normalize to a string before validation.
+		let value: unknown = stored;
+		try {
+			const parsed = JSON.parse(stored);
+			if (Array.isArray(parsed)) {
+				value = parsed[0];
+			} else if (typeof parsed === "string") {
+				value = parsed;
+			} else {
+				value = stored;
+			}
+		} catch {
+			// If JSON.parse fails, assume the stored value is a plain string
+			value = stored;
+		}
+
+		return userThemeSchema.parse(value as any);
 	});
 
 const setStoredTheme = createClientOnlyFn((theme: UserTheme) => {
