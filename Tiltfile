@@ -1,11 +1,34 @@
+version_settings(constraint='>=0.36.3')
+
 APPS = ["api", "web", "auth"]
 
-def ignore_other_apps(current):
-    ignored = []
-    for app in APPS:
-        if app != current:
-            ignored.append("./apps/" + app)
-    return ignored
+# Setup namespace and role first
+k8s_yaml([
+    'infrastructure/k8s/app.namespace.yaml',
+    'infrastructure/k8s/app.role.yaml',
+])
+
+# Build workspace packages first
+local_resource(
+    'build-packages',
+    cmd='pnpm turbo build:packages',
+    ignore=['packages/**/.turbo/**', 'packages/**/dist/**'],
+    labels=['builds']
+)
+
+# Create GHCR secret from environment variables using kubectl
+local_resource(
+    'ghcr-secret',
+    cmd='''kubectl create secret docker-registry ghcr-secret \
+        --dry-run=client \
+        --docker-server=ghcr.io \
+        --docker-username=$GITHUB_USERNAME \
+        --docker-password=$GITHUB_TOKEN \
+        --docker-email=$GITHUB_EMAIL \
+        --namespace=app \
+        -o yaml | kubectl apply -f -''',
+    labels=['secrets']
+)
 
 # api
 docker_build(
@@ -14,14 +37,22 @@ docker_build(
     dockerfile="./apps/api/Dockerfile",
     live_update=[
         sync("./apps/api/src/", "/app/apps/api/src"),
+        run(
+            "pnpm install",
+            trigger=["./apps/api/package.json", "./apps/api/pnpm-lock.yaml"],
+        )
     ],
-    ignore=ignore_other_apps("api"),
+    only=[
+        "./apps/api", 
+        "./pnpm-workspace.yaml", 
+        "./pnpm-lock.yaml", 
+        "./package.json",
+        "./packages",
+    ],
     target="development"
 )
 
 k8s_yaml([
-    'infrastructure/k8s/namespace.yaml',
-    'infrastructure/k8s/rbac.yaml',    
     'infrastructure/k8s/api/api.depl.yaml',
     'infrastructure/k8s/api/api.service.yaml',
     'infrastructure/k8s/api/api.config.yaml',
@@ -31,7 +62,15 @@ k8s_yaml([
 
 k8s_resource(
    'api-deployment',
-    port_forwards=['8000:8000','9000:9229']
+    port_forwards=['8000:8000','9000:9229'],
+    resource_deps=['build-packages', 'ghcr-secret'],
+    labels=['apps']
+)
+
+k8s_resource(
+    'api-job',
+    resource_deps=['build-packages', 'ghcr-secret'],
+    labels=['jobs']
 )
 
 # web
@@ -42,8 +81,18 @@ docker_build(
     live_update=[
         sync("./apps/web/src/", "/app/apps/web/src"),
         sync("./apps/web/public/", "/app/apps/web/public"),
+        run(
+            "pnpm install",
+            trigger=["./apps/web/package.json", "./apps/web/pnpm-lock.yaml"],
+        )
     ],
-    ignore=ignore_other_apps("web"),
+    only=[
+        "./apps/web", 
+        "./pnpm-workspace.yaml", 
+        "./pnpm-lock.yaml", 
+        "./package.json",
+        "./packages",
+    ],
     target="development"
 )
 
@@ -56,7 +105,9 @@ k8s_yaml([
 
 k8s_resource(
     'web-deployment',
-    port_forwards=['3000:3000','9001:9229']
+    port_forwards=['3000:3000','9001:9229'],
+    resource_deps=['build-packages', 'ghcr-secret'],
+    labels=['apps']
 )
 
 # auth
@@ -66,8 +117,18 @@ docker_build(
     dockerfile="./apps/auth/Dockerfile",
     live_update=[
         sync("./apps/auth/src/", "/app/apps/auth/src"),
+        run(
+            "pnpm install",
+            trigger=["./apps/auth/package.json", "./apps/auth/pnpm-lock.yaml"],
+        )
     ],
-    ignore=ignore_other_apps("auth"),
+    only=[
+        "./apps/auth", 
+        "./pnpm-workspace.yaml", 
+        "./pnpm-lock.yaml", 
+        "./package.json",
+        "./packages",
+    ],
     target="development"
 )
 
@@ -81,7 +142,15 @@ k8s_yaml([
 
 k8s_resource(
     'auth-deployment',
-    port_forwards=['4000:4000','9002:9229']
+    port_forwards=['4000:4000','9002:9229'],
+    resource_deps=['build-packages', 'ghcr-secret'],
+    labels=['apps']
+)
+
+k8s_resource(
+    'auth-job',
+    resource_deps=['build-packages', 'ghcr-secret'],
+    labels=['jobs']
 )
 
 # Postgres
@@ -93,5 +162,7 @@ k8s_yaml([
 
 k8s_resource(
     'postgres',
-    port_forwards=['5432:5432']
+    port_forwards=['5432:5432'],
+    resource_deps=['ghcr-secret'],
+    labels=['databases']
 )

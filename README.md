@@ -1,4 +1,4 @@
-# node-ts-starter
+# Node TypeScript Starter
 
 A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based API, a Better Auth session service, shared TypeScript contracts, and Kubernetes-ready infrastructure so you can experiment with full-stack patterns from a single workspace.
 
@@ -13,7 +13,7 @@ A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based
 
 ## Prerequisites
 
-1. **Node.js** ≥ 24.12.0 (`package.json` `engines`).
+1. **Node.js** ≥ v24 (`package.json` `engines`).
 2. **pnpm** 10.24.0 (root `packageManager`).
 3. **Docker** when you need Postgres containers or Tilt’s cluster emulation.
 4. **Tilt** (`pnpm dev:k8s`) for the Kubernetes-style dev workflow.
@@ -22,6 +22,23 @@ A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based
 
 ```bash
 pnpm install
+
+# If you want to pull or push images to GitHub Container Registry, authenticate first:
+docker login ghcr.io
+# Or if you want to use Docker Hub instead:
+docker login docker.io
+
+# Then set these environment variables so the Kubernetes manifests can reference them for image pulls:
+export GITHUB_TOKEN=<your-github-token>
+export GITHUB_USERNAME=<your-github-username>
+export GITHUB_EMAIL=<your-github-email>
+echo $GITHUB_TOKEN $GITHUB_USERNAME $GITHUB_EMAIL
+
+# Create the `app` namespace for all deployments:
+kubectl apply -f infrastructure/k8s/app.namespace.yaml
+
+# Apply the GitHub Container Registry secret (requires GITHUB_TOKEN, GITHUB_USERNAME, and GITHUB_EMAIL environment variables):
+kubectl apply -f infrastructure/k8s/ghcr.secret.yaml
 ```
 
 1. Copy `apps/api/example.env`, `apps/auth/example.env`, and `apps/web/example.env` into their respective directories and fill in secrets (database URLs, client origins, `BETTER_AUTH_SECRET`, etc.)
@@ -39,7 +56,7 @@ pnpm install
 
 ## Tilt & Kubernetes
 
-`pnpm dev:k8s` runs Tilt from the workspace root. The `Tiltfile` declares services for API, Auth, Web, Postgres, and any extra Kubernetes resources under `infrastructure/k8s/` (deployments, services, secrets). The optional Helm charts live under `infrastructure/helm/`.
+`pnpm dev:k8s` runs Tilt from the workspace root. The `Tiltfile` declares services for API, Auth, Web, Postgres, and any extra Kubernetes resources under `infrastructure/k8s/` (deployments, services, configs, secrets, and migration jobs).
 
 ## Shared tooling
 
@@ -73,4 +90,4 @@ Copy the template, remove the leading `#` comments, and update the values to mat
 3. Run `pnpm --filter <package> format` / `lint` to stay consistent.
 4. Update `packages/core/dist` whenever shared exports change so the apps consume the latest bundle.
 
-Generated on 2025-12-11
+Generated on 2026-02-14

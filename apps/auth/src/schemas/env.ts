@@ -4,7 +4,7 @@ export const envSchema = z.object({
 	NODE_ENV: z
 		.enum(["development", "testing", "production"])
 		.default("production"),
-	PORT: z.coerce.number().default(8000),
+	PORT: z.coerce.number().default(4000),
 	CLIENT_URLS: z.url(),
 	BETTER_AUTH_SECRET: z.string().min(18),
 	BETTER_AUTH_URL: z.url(),
