@@ -1,22 +1,27 @@
 version_settings(constraint='>=0.36.3')
 
-APPS = ["api", "web", "auth"]
-
-# Setup namespace and role first
+# cluster - manifests
 k8s_yaml([
     'infrastructure/k8s/app.namespace.yaml',
     'infrastructure/k8s/app.role.yaml',
 ])
 
-# Build workspace packages first
-local_resource(
-    'build-packages',
-    cmd='pnpm turbo build:packages',
-    ignore=['packages/**/.turbo/**', 'packages/**/dist/**'],
-    labels=['builds']
+# cluster - cluster setup
+k8s_resource(
+    objects=['app:namespace'],
+    new_name='cluster-setup',
+    labels=['cluster']
 )
 
-# Create GHCR secret from environment variables using kubectl
+# cluster - app setup
+k8s_resource(
+    objects=['job-reader:role:app', 'job-reader-binding:rolebinding:app'],
+    new_name='app-setup',
+    labels=['cluster'],
+    resource_deps=['cluster-setup']
+)
+
+# cluster - ghcr secret
 local_resource(
     'ghcr-secret',
     cmd='''kubectl create secret docker-registry ghcr-secret \
@@ -27,10 +32,19 @@ local_resource(
         --docker-email=$GITHUB_EMAIL \
         --namespace=app \
         -o yaml | kubectl apply -f -''',
-    labels=['secrets']
+    labels=['cluster'],
+    resource_deps=['cluster-setup']
 )
 
-# api
+# cluster - packages setup
+local_resource(
+    'packages-setup',
+    cmd='pnpm turbo build:packages',
+    ignore=['packages/**/.turbo/**', 'packages/**/dist/**'],
+    labels=['cluster']
+)
+
+# api - build
 docker_build(
     ref="ghcr.io/awwwkshay/node-ts-api-starter", 
     context=".",
@@ -52,6 +66,7 @@ docker_build(
     target="development"
 )
 
+# api - manifests
 k8s_yaml([
     'infrastructure/k8s/api/api.depl.yaml',
     'infrastructure/k8s/api/api.service.yaml',
@@ -60,20 +75,26 @@ k8s_yaml([
     'infrastructure/k8s/api/api.job.yaml',
     ])
 
+# api - resource
 k8s_resource(
-   'api-deployment',
+    workload='api-deployment',
+    objects=[
+        'api-secret:secret:app',
+        'api-config:configmap:app',
+    ],
     port_forwards=['8000:8000','9000:9229'],
-    resource_deps=['build-packages', 'ghcr-secret'],
-    labels=['apps']
+    resource_deps=['packages-setup', 'ghcr-secret'],
+    labels=['api']
 )
 
+# api - job
 k8s_resource(
     'api-job',
-    resource_deps=['build-packages', 'ghcr-secret'],
-    labels=['jobs']
+    labels=['api'],
+    resource_deps=['packages-setup', 'ghcr-secret']
 )
 
-# web
+# web - build
 docker_build(
     ref="ghcr.io/awwwkshay/node-ts-web-starter",
     context=".",
@@ -96,6 +117,7 @@ docker_build(
     target="development"
 )
 
+# web - manifests
 k8s_yaml([  
     'infrastructure/k8s/web/web.depl.yaml',
     'infrastructure/k8s/web/web.service.yaml',
@@ -103,14 +125,19 @@ k8s_yaml([
     'infrastructure/k8s/web/web.secret.yaml',
     ])
 
+# web - resource
 k8s_resource(
-    'web-deployment',
+    workload='web-deployment',
+    objects=[
+        'web-secret:secret:app',
+        'web-config:configmap:app',
+    ],
     port_forwards=['3000:3000','9001:9229'],
-    resource_deps=['build-packages', 'ghcr-secret'],
-    labels=['apps']
+    resource_deps=['packages-setup', 'ghcr-secret'],
+    labels=['web']
 )
 
-# auth
+# auth - build
 docker_build(
     ref="ghcr.io/awwwkshay/node-ts-auth-starter",
     context=".",
@@ -132,6 +159,7 @@ docker_build(
     target="development"
 )
 
+# auth - manifests
 k8s_yaml([
     'infrastructure/k8s/auth/auth.depl.yaml',
     'infrastructure/k8s/auth/auth.service.yaml',
@@ -140,29 +168,39 @@ k8s_yaml([
     'infrastructure/k8s/auth/auth.job.yaml', 
     ])
 
+# auth - resource
 k8s_resource(
-    'auth-deployment',
+    workload='auth-deployment',
+    objects=[
+        'auth-secret:secret:app',
+        'auth-config:configmap:app',
+    ],
     port_forwards=['4000:4000','9002:9229'],
-    resource_deps=['build-packages', 'ghcr-secret'],
-    labels=['apps']
+    resource_deps=['packages-setup', 'ghcr-secret'],
+    labels=['auth']
 )
 
+# auth - job
 k8s_resource(
     'auth-job',
-    resource_deps=['build-packages', 'ghcr-secret'],
-    labels=['jobs']
+    labels=['auth'],
+    resource_deps=['packages-setup', 'ghcr-secret']
 )
 
-# Postgres
+# postgres - manifests
 k8s_yaml([  
     'infrastructure/k8s/postgres/postgres.depl.yaml',
     'infrastructure/k8s/postgres/postgres.service.yaml',
     'infrastructure/k8s/postgres/postgres.secret.yaml',
     ])
 
+# postgres - resource
 k8s_resource(
-    'postgres',
+    workload='postgres',
+    objects=[
+        'postgres-secret:secret:app',
+    ],
     port_forwards=['5432:5432'],
     resource_deps=['ghcr-secret'],
-    labels=['databases']
+    labels=['cluster']
 )
