@@ -2,11 +2,6 @@
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["pnpm-lock.yaml", "pnpm-workspace.yaml"],
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "cache": true
-    },
     "build:apps": {
       "dependsOn": ["^build"],
       "outputs": ["apps/**/dist/**"],
@@ -15,6 +10,11 @@
     "build:packages": {
       "dependsOn": ["^build"],
       "outputs": ["packages/**/dist/**"],
+      "cache": true
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"],
       "cache": true
     },
     "dev": {
@@ -32,6 +32,14 @@
     },
     "test": {
       "dependsOn": ["^test"],
+      "outputs": []
+    },
+    "clean:dist": {
+      "cache": false,
+      "outputs": []
+    },
+    "clean:node_modules": {
+      "cache": false,
       "outputs": []
     },
     "clean": {
