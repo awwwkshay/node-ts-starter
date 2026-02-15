@@ -2,12 +2,13 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, openAPI } from "better-auth/plugins";
 
+import { ENV_VARS } from "@/config";
 import { accounts, sessions, users, verifications, db, jwkss } from "@/db";
 
 export const auth = betterAuth({
 	trustedOrigins: ["*"],
-	secret: process.env.BETTER_AUTH_SECRET,
-	url: process.env.BETTER_AUTH_URL,
+	secret: ENV_VARS.BETTER_AUTH_SECRET,
+	url: ENV_VARS.BETTER_AUTH_URL,
 	basePath: "/",
 	user: {
 		deleteUser: {
