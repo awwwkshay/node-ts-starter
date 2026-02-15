@@ -6,6 +6,7 @@ declare global {
 			readonly PORT: string;
 			readonly DATABASE_URL: string;
 			readonly CLIENT_URLS: string;
+			readonly DB_SSL: boolean;
 		}
 	}
 }

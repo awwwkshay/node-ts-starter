@@ -27,12 +27,12 @@
   "devDependencies": {
     "@better-auth/cli": "^1.4.6",
     "@types/pg": "^8.15.6",
+    "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.6",
     "better-auth": "^1.4.6",
-    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.0",
     "hono": "^4.10.7",
     "pg": "^8.16.3",

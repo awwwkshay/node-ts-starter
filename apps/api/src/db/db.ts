@@ -1,12 +1,13 @@
-import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
+
+import { ENV_VARS } from "@/config";
 
 import { todosTable } from "./schema";
 
-const useSsl = process.env.DB_SSL?.toLowerCase() === "true";
+const useSsl = ENV_VARS.DB_SSL;
 
 const connectionOptions = {
-	connectionString: process.env.DATABASE_URL!,
+	connectionString: ENV_VARS.DATABASE_URL,
 	ssl: useSsl ? { rejectUnauthorized: false } : false,
 };
 

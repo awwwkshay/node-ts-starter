@@ -15,7 +15,7 @@
     "build": "rolldown -c rolldown.config.ts",
     "watch": "rolldown -c rolldown.config.ts --watch",
     "dev:nodemon": "nodemon --exec node dist/server.js",
-    "predev": "pnpm clean && pnpm build",
+    "predev": "pnpm build",
     "dev": "NODE_ENV=development concurrently \"pnpm watch\" \"pnpm dev:nodemon\"",
     "start": "NODE_ENV=production node dist/server.js",
     "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output src/db/auth-schema.ts --config src/lib/auth.ts",
