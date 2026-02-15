@@ -1,5 +1,21 @@
 version_settings(constraint='>=0.36.3')
 
+def get_app_deps(name):
+    return [
+        "./apps/%s" % name,
+        "./pnpm-workspace.yaml",
+        "./pnpm-lock.yaml",
+        "./package.json",
+        "./packages",
+    ]
+
+def get_app_ignores(name):
+    return [
+        "./apps/%s/dist" % name,
+        "./apps/%s/.turbo" % name,
+    ]
+
+
 # cluster - manifests
 k8s_yaml([
     'infrastructure/k8s/app.namespace.yaml',
@@ -56,13 +72,8 @@ docker_build(
             trigger=["./apps/api/package.json", "./apps/api/pnpm-lock.yaml"],
         )
     ],
-    only=[
-        "./apps/api", 
-        "./pnpm-workspace.yaml", 
-        "./pnpm-lock.yaml", 
-        "./package.json",
-        "./packages",
-    ],
+    only=get_app_deps("api"),
+    ignore=get_app_ignores("api"),
     target="development"
 )
 
@@ -107,13 +118,8 @@ docker_build(
             trigger=["./apps/web/package.json", "./apps/web/pnpm-lock.yaml"],
         )
     ],
-    only=[
-        "./apps/web", 
-        "./pnpm-workspace.yaml", 
-        "./pnpm-lock.yaml", 
-        "./package.json",
-        "./packages",
-    ],
+    only=get_app_deps("web"),
+    ignore=get_app_ignores("web"),
     target="development"
 )
 
@@ -149,13 +155,8 @@ docker_build(
             trigger=["./apps/auth/package.json", "./apps/auth/pnpm-lock.yaml"],
         )
     ],
-    only=[
-        "./apps/auth", 
-        "./pnpm-workspace.yaml", 
-        "./pnpm-lock.yaml", 
-        "./package.json",
-        "./packages",
-    ],
+    only=get_app_deps("auth"),
+    ignore=get_app_ignores("auth"),
     target="development"
 )
 
