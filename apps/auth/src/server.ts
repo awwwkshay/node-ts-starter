@@ -1,29 +1,32 @@
-import "dotenv/config";
 import { serve } from "@hono/node-server";
 
-import { app } from "@/app";
+import { ENV_VARS } from "@/config";
+import { auth, createHonoApp } from "@/lib";
 
-const NODE_ENV = process.env.NODE_ENV ?? "production";
-console.log("NODE_ENV:", NODE_ENV);
+function main() {
+	// Initialize the Hono app
+	const app = createHonoApp();
+	app.on(["POST", "GET"], "/*", (c) => auth.handler(c.req.raw));
 
-const server = serve(
-	{ fetch: app.fetch, port: Number.parseInt(process.env.PORT!) },
-	(info) => {
+	// Start the server
+	const server = serve({ fetch: app.fetch, port: ENV_VARS.PORT }, (info) => {
 		console.log(`Server is running on http://localhost:${info.port}`);
-	},
-);
+	});
 
-// graceful shutdown
-process.on("SIGINT", () => {
-	server.close();
-	process.exit(0);
-});
-process.on("SIGTERM", () => {
-	server.close((err) => {
-		if (err) {
-			console.error(err);
-			process.exit(1);
-		}
+	// Graceful shutdown
+	process.on("SIGINT", () => {
+		server.close();
 		process.exit(0);
 	});
-});
+	process.on("SIGTERM", () => {
+		server.close((err) => {
+			if (err) {
+				console.error(err);
+				process.exit(1);
+			}
+			process.exit(0);
+		});
+	});
+}
+
+main();

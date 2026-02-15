@@ -1,68 +1,67 @@
-# node-ts-starter
+# Node TypeScript Starter
 
 A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based API, a Better Auth session service, shared TypeScript contracts, and Kubernetes-ready infrastructure so you can experiment with full-stack patterns from a single workspace.
 
 ## Workspace layout
 
-- `apps/api/` – Hono server that validates every request payload with `zod`, relies on `packages/core` for shared schemas, and exposes `/todos`, `/info`, and health probes.
-- `apps/auth/` – Less than a dozen routes backed by Better Auth and Drizzle, exposing OpenAPI docs at `/docs` plus JWT/cookie tooling.
-- `apps/web/` – Vite + React 19 + TanStack Router/Query UI with Nitro SSR and shared schema validation from `packages/core`.
-- `apps/postgres/` – Helper script used by Tilt or custom Docker workflows to create multiple Postgres databases via the official image.
-- `packages/core/` – Shared `todoSchema`, helpers, and `tsdown` output (CJS + ESM) consumed by every app.
-- `infrastructure/` – Tiltfile, Helm charts, and Kubernetes manifests (`infrastructure/k8s/`) to bring the stack up locally or deploy it to a cluster.
+- `apps/` – The main applications: `api`, `auth`, and `web`. Each has its own `package.json`, source code, and build scripts.
+  - `apps/api/` – Hono API server with `rolldown` bundling and `nodemon` for hot reloads.
+  - `apps/auth/` – Better Auth session management service using Drizzle ORM for database interactions.
+  - `apps/web/` – React 19 front-end with Vite and Nitro for server-side rendering and API proxying.
+  - `apps/postgres/` – Helper scripts for managing Postgres databases, including multi-database creation for API and Auth services.
+- `packages/` – Shared TypeScript code, currently just `core` for shared Zod schemas and types, but open to utilities, UI components, or anything else that can be consumed across apps.
+  - `packages/core/` – Exports shared TypeScript types and Zod schemas, bundled with `tsdown` for easy consumption by both API and web clients.
+- `infrastructure/` – Kubernetes & Docker manifests to bring the stack up locally or deploy it to a cluster.
+  - `infrastructure/k8s/` - Kubernetes manifests for API, Auth, Web, and Postgres services, plus any shared resources like ConfigMaps or Secrets.
+  - `infrastructure/docker/` - Docker compose files and helper scripts for running the stack without Tilt or Kubernetes, if desired.
+- [`Tiltfile`](./Tiltfile) – The Tilt configuration that defines how to build and run each service in a Kubernetes-like environment, including watching for changes and rebuilding as needed.
+- [`turbo.json`](./turbo.json) – Turborepo configuration for orchestrating builds, tests, and other scripts across the monorepo with caching and parallel execution.
 
 ## Prerequisites
 
-1. **Node.js** ≥ 24.12.0 (`package.json` `engines`).
+1. **Node.js** ≥ v24 (`package.json` `engines`).
 2. **pnpm** 10.24.0 (root `packageManager`).
 3. **Docker** when you need Postgres containers or Tilt’s cluster emulation.
 4. **Tilt** (`pnpm dev:k8s`) for the Kubernetes-style dev workflow.
 
 ## Getting started
 
+### Running the project locally for development
+
 ```bash
-pnpm install
+# Clone the repo and install dependencies:
+$ git clone git@github.com:awwwkshay/node-ts-starter.git
+# Make sure to use pnpm 10.24.0 as specified in package.json:
+$ npm install -g pnpm@10.24.0
+# Install all dependencies across the monorepo:
+$ pnpm install
+
+# Login to whatever docker registries you plan to push to (e.g., GitHub Container Registry, Docker Hub):
+$ docker login ghcr.io 
+$ docker login docker.io
+
+# Add these lines to .zshrc if on mac
+export GITHUB_TOKEN=<your-github-token>
+export GITHUB_USERNAME=<your-github-username>
+export GITHUB_EMAIL=<your-github-email>
+
+# Load the .zshrc changes:
+$ source ~/.zshrc
+
+# Verify the variables are set:
+$ echo $GITHUB_TOKEN $GITHUB_USERNAME $GITHUB_EMAIL
+
+# For development run using tilt:
+$ tilt up
 ```
-
-1. Copy `apps/api/example.env`, `apps/auth/example.env`, and `apps/web/example.env` into their respective directories and fill in secrets (database URLs, client origins, `BETTER_AUTH_SECRET`, etc.)
-2. Run any app individually via `pnpm --filter <package> dev` or start the whole stack with `pnpm dev:k8s` (Tilt handles the `infrastructure/k8s` manifests + Postgres helper).
-3. For production builds, use `pnpm --filter <package> build` or orchestrate across packages with `pnpm turbo run build`.
-
-## Running the services
-
-| Service | Dev command | Notes |
-| --- | --- | --- |
-| API | `pnpm --filter @awwwkshay/node-ts-api-starter dev` | `rolldown --watch` + `nodemon dist/server.js`, CORS-locked via `CLIENT_URLS`. |
-| Auth | `pnpm --filter @awwwkshay/node-ts-auth-starter dev` | Better Auth surface + Drizzle; requires `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `DATABASE_URL`. |
-| Web | `pnpm --filter @awwwkshay/node-ts-web-starter dev` | Vite + Nitro dev server, proxies to the API via `NITRO_API_BASE_URL`. |
-| Full stack | `pnpm dev:k8s` | Tilt orchestrates everything, including the `apps/postgres` script that seeds extra databases. |
-
-## Tilt & Kubernetes
-
-`pnpm dev:k8s` runs Tilt from the workspace root. The `Tiltfile` declares services for API, Auth, Web, Postgres, and any extra Kubernetes resources under `infrastructure/k8s/` (deployments, services, secrets). The optional Helm charts live under `infrastructure/helm/`.
-
-## Shared tooling
-
-- `packages/core` publishes shared schemas via `tsdown` so both API and web clients always share the same contracts.
-- `turbo.json` orchestrates cross-package builds/tests via `pnpm turbo run build`, `lint`, `test`, and `clean`.
-- Postgres multi-database creation happens through `apps/postgres/create-multiple-postgresql-databases.sh`, triggered by setting `POSTGRES_MULTIPLE_DATABASES` before Tilt or Docker starts the container.
-
-## Root scripts
-
-| Script | Description |
-| --- | --- |
-| `pnpm clean:dist` | Remove every `dist/` folder across `apps/` and `packages/`. |
-| `pnpm clean:node_modules` | Drop every `node_modules` under `apps/` and `packages/`. |
-| `pnpm clean:all` | Runs both of the above. |
-| `pnpm dev:k8s` | Starts Tilt for the Kubernetes-like dev experience. |
 
 ## Environment templates
 
 | App | Template |
 | --- | --- |
-| API | `apps/api/example.env` |
-| Auth | `apps/auth/example.env` |
-| Web | `apps/web/example.env` |
+| API | [`apps/api/example.env`](./apps/api/example.env) |
+| Auth | [`apps/auth/example.env`](./apps/auth/example.env) |
+| Web | [`apps/web/example.env`](./apps/web/example.env) |
 
 Copy the template, remove the leading `#` comments, and update the values to match your local credentials or hosted secrets.
 
@@ -73,4 +72,4 @@ Copy the template, remove the leading `#` comments, and update the values to mat
 3. Run `pnpm --filter <package> format` / `lint` to stay consistent.
 4. Update `packages/core/dist` whenever shared exports change so the apps consume the latest bundle.
 
-Generated on 2025-12-11
+Generated on 2026-02-14

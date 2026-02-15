@@ -15,6 +15,8 @@ spec:
       labels:
         app: web
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
       containers:
         - name: web
           image: ghcr.io/awwwkshay/node-ts-web-starter
