@@ -71,25 +71,25 @@ All GitHub rulesets for branch protection, naming conventions, and environment-s
 ### View Rulesets
 
 ```bash
-gh api repos/awwwkshay/node-ts-starter/rulesets
+gh api repos/awwwkshay/node-ts-monorepo-starter/rulesets
 ```
 
 ### View Specific Ruleset
 
 ```bash
-gh api repos/awwwkshay/node-ts-starter/rulesets/13118747
+gh api repos/awwwkshay/node-ts-monorepo-starter/rulesets/13118747
 ```
 
 ### Update a Ruleset
 
 1. Modify the JSON file in `.github/rulesets/`
-2. Delete the old ruleset: `gh api repos/awwwkshay/node-ts-starter/rulesets/{ID} -X DELETE`
+2. Delete the old ruleset: `gh api repos/awwwkshay/node-ts-monorepo-starter/rulesets/{ID} -X DELETE`
 3. Redeploy: `curl -X POST -H "Authorization: token $(gh auth token)" ... --input ruleset.json`
 
 ### Delete a Ruleset
 
 ```bash
-gh api repos/awwwkshay/node-ts-starter/rulesets/{ID} -X DELETE
+gh api repos/awwwkshay/node-ts-monorepo-starter/rulesets/{ID} -X DELETE
 ```
 
 ---
@@ -166,7 +166,7 @@ To manage rulesets via GitHub UI:
 2. View, edit, or delete rulesets
 3. Monitor which rules are enforced
 
-**URL**: <https://github.com/awwwkshay/node-ts-starter/settings/rules>
+**URL**: <https://github.com/awwwkshay/node-ts-monorepo-starter/settings/rules>
 
 ---
 
@@ -180,4 +180,4 @@ To manage rulesets via GitHub UI:
 ---
 
 **Last Updated**: 2026-02-23
-**Repository**: awwwkshay/node-ts-starter
+**Repository**: awwwkshay/node-ts-monorepo-starter

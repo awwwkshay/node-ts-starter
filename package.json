@@ -1,5 +1,5 @@
 {
-  "name": "@awwwkshay/node-ts-starter",
+  "name": "@awwwkshay/node-ts-monorepo-starter",
   "version": "1.0.0",
   "description": "A monorepo for Web & API applications built with Node.js and TypeScript",
   "readme": "./README.md",

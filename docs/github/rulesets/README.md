@@ -15,7 +15,7 @@ Rulesets are automatically deployed to your GitHub repository. They are defined 
 ### View Deployed Rulesets
 
 ```bash
-gh api repos/awwwkshay/node-ts-starter/rulesets
+gh api repos/awwwkshay/node-ts-monorepo-starter/rulesets
 ```
 
 ### Deploy Updates
@@ -24,14 +24,14 @@ After modifying a ruleset file:
 
 ```bash
 # Delete the old ruleset
-gh api repos/awwwkshay/node-ts-starter/rulesets/{ID} -X DELETE
+gh api repos/awwwkshay/node-ts-monorepo-starter/rulesets/{ID} -X DELETE
 
 # Deploy the new version
 curl -X POST \
   -H "Authorization: token $(gh auth token)" \
   -H "Accept: application/vnd.github.v3+json" \
   -H "Content-Type: application/json" \
-  https://api.github.com/repos/awwwkshay/node-ts-starter/rulesets \
+  https://api.github.com/repos/awwwkshay/node-ts-monorepo-starter/rulesets \
   --input .github/rulesets/ruleset-name.json
 ```
 

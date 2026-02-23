@@ -42,7 +42,7 @@ All project documentation is located in the `docs/` folder. Here are the main se
 
 ```bash
 # Clone the repo and install dependencies:
-$ git clone git@github.com:awwwkshay/node-ts-starter.git
+$ git clone git@github.com:awwwkshay/node-ts-monorepo-starter.git
 # Make sure to use pnpm 10.24.0 as specified in package.json:
 $ npm install -g pnpm@10.24.0
 # Install all dependencies across the monorepo:
