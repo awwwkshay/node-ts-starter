@@ -1,16 +1,32 @@
-MIT License
-
-Copyright (c) 2025 awwwkshay
+Non-Commercial License with Attribution
+Copyright (c) 2026 Akshay Priyadarshi (akshayp1904@outlook.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, merge, and distribute the Software for NON-COMMERCIAL purposes
+only, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. NON-COMMERCIAL USE ONLY
+   The Software may not be used, copied, modified, merged, distributed, or
+   sublicensed for commercial purposes without prior written permission from
+   the copyright holder. "Commercial purposes" includes any use intended for
+   or directed toward commercial advantage, monetary compensation, or business
+   operations.
+
+2. COMMERCIAL USE REQUIRES PERMISSION
+   To use this Software for commercial purposes, you must obtain explicit
+   written permission from the copyright holder prior to such use. Please
+   reach out at: akshayp1904@outlook.com
+
+3. ATTRIBUTION REQUIRED
+   The above copyright notice, this permission notice, and the author's name
+   must be included and clearly visible in all copies, substantial portions,
+   or derivative works of the Software. Derivative works must not misrepresent
+   the original authorship.
+
+4. NO SUBLICENSING
+   You may not sublicense the Software or grant others rights beyond what is
+   permitted under this license without written consent from the copyright holder.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
