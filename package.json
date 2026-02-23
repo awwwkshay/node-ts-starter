@@ -1,5 +1,5 @@
 {
-  "name": "@awwwkshay/node-ts-starter",
+  "name": "@awwwkshay/node-ts-monorepo-starter",
   "version": "1.0.0",
   "description": "A monorepo for Web & API applications built with Node.js and TypeScript",
   "readme": "./README.md",
@@ -21,7 +21,7 @@
     "name": "Akshay Priyadarshi",
     "email": "akshayp1904@outlook.com"
   },
-  "license": "MIT",
+  "license": "LicenseRef-NonCommercial",
   "devDependencies": {
     "@types/node": "^22.19.11",
     "concurrently": "^9.2.1",

@@ -1,0 +1,28 @@
+{
+  "name": "branch-naming-convention",
+  "description": "Enforce conventions for non-protected branches",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": [
+        "refs/heads/*"
+      ],
+      "exclude": [
+        "refs/heads/main",
+        "refs/heads/dev",
+        "refs/heads/qa",
+        "refs/heads/uat",
+        "refs/heads/prod"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "required_linear_history"
+    }
+  ]
+}

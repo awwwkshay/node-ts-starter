@@ -14,8 +14,20 @@ A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based
 - `infrastructure/` – Kubernetes & Docker manifests to bring the stack up locally or deploy it to a cluster.
   - `infrastructure/k8s/` - Kubernetes manifests for API, Auth, Web, and Postgres services, plus any shared resources like ConfigMaps or Secrets.
   - `infrastructure/docker/` - Docker compose files and helper scripts for running the stack without Tilt or Kubernetes, if desired.
+- `raw_scripts/` – Utility scripts for repository maintenance and deployment tasks.
 - [`Tiltfile`](./Tiltfile) – The Tilt configuration that defines how to build and run each service in a Kubernetes-like environment, including watching for changes and rebuilding as needed.
 - [`turbo.json`](./turbo.json) – Turborepo configuration for orchestrating builds, tests, and other scripts across the monorepo with caching and parallel execution.
+
+## 📚 Documentation
+
+All project documentation is located in the `docs/` folder. Here are the main sections:
+
+- **[Documentation Index](./docs/README.md)** – Start here for an overview of all documentation
+- **[GitHub Configuration](./docs/github/README.md)** – Information about GitHub rulesets and branch protection
+  - [Rulesets Overview](./docs/github/RULESETS.md) – Complete guide to branch protection rules
+  - [Deployment Guide](./docs/github/DEPLOY_GUIDE.md) – How to deploy and manage rulesets
+- **[Workflows](./docs/workflows/README.md)** – Documentation about GitHub Actions and automation
+- **[Getting Started](./docs/getting-started/README.md)** – Quick start guides and examples
 
 ## Prerequisites
 
@@ -30,7 +42,7 @@ A pnpm-powered monorepo that boots a React 19 + TanStack front-end, a Hono-based
 
 ```bash
 # Clone the repo and install dependencies:
-$ git clone git@github.com:awwwkshay/node-ts-starter.git
+$ git clone git@github.com:awwwkshay/node-ts-monorepo-starter.git
 # Make sure to use pnpm 10.24.0 as specified in package.json:
 $ npm install -g pnpm@10.24.0
 # Install all dependencies across the monorepo:
@@ -72,4 +84,6 @@ Copy the template, remove the leading `#` comments, and update the values to mat
 3. Run `pnpm --filter <package> format` / `lint` to stay consistent.
 4. Update `packages/core/dist` whenever shared exports change so the apps consume the latest bundle.
 
-Generated on 2026-02-14
+---
+
+**Last Updated**: 2026-02-23
